@@ -57,7 +57,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("Connected to exercise bike")
+        print("Connected to exercise bike, discovering services")
         peripheral.discoverServices([serviceUUID])
     }
     
@@ -70,8 +70,10 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        debugPrint("Discovering service: \(service)")
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
+                debugPrint("  Characteristics: \(characteristic)")
                 if characteristic.uuid == notifyCharacteristicUUID1 || characteristic.uuid == notifyCharacteristicUUID2 {
                     peripheral.setNotifyValue(true, for: characteristic)
                     print("NOTIFYING characteristics set: \(characteristic)")
