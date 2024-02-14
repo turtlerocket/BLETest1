@@ -46,7 +46,7 @@ struct ContentView: View {
                         Text("Total Power: \(String(format: "%.2f", viewModel.exerciseData.totalPower))")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
-                        Text("Total Distance: \(String(format: "%.2f", viewModel.exerciseData.totalDistance))")
+                        Text("Distance: \(String(format: "%.2f", viewModel.exerciseData.totalDistance))")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
                     }

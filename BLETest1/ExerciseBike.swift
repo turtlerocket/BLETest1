@@ -114,7 +114,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             // Update total power and total distance only every second
             if Int(elapsedTime) % 1 == 0 {
                 self.exerciseData.totalPower += currentPower / 3600 // Power is in Watt-Hours
-                self.exerciseData.totalDistance += currentSpeed / 3600 // Distance is in units per second (e.g., meters/second)
+                self.exerciseData.totalDistance += currentSpeed / 3600 // Distance is in units per second (e.g., kmeters/second)
             }
 
             // Update elapsed time
@@ -155,7 +155,10 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
         // Implement your speed calculation logic here
         // Example calculation: speed = (cadence * resistance) / 10
         //   return (cadence * resistance)/10
-        return ((cadence - 35) * 0.4) * ((resistance/100) * 9) + 0.4
+ //       return ((cadence - 35) * 0.4) * ((resistance/32) * 9) + 0.4
+ //         return ((cadence) * 0.4) * ((resistance/32) * 9) + 0.4
+  //The 2.5 is an exponent. I did the same thing as you, but I think the formula appears differently on // web/iPhone/Android. Works much better as an exponent!
+        return pow(10 * self.exerciseData.currentPower, 0.4)
     }
     
     
