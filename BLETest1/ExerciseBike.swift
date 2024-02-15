@@ -245,7 +245,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
                     isLoading = false
                     self.exerciseData.cadence = Double((Int16(data[9]) << 8) + Int16(data[10]))
                     self.exerciseData.currentPower = calculatePower(cadence: self.exerciseData.cadence, resistance: Double(self.exerciseData.resistance))
-                    print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
+  //                  print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
                     updateCadenceAndResistance()
                 } else {
                     print("Error: Invalid data length for Cadence message")
