@@ -5,8 +5,8 @@ import UIKit
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-   //     @StateObject var viewModel = ExerciseBike()
-    @StateObject var viewModel = SimulatedExerciseBike()
+    @StateObject var viewModel = ExerciseBike()
+  //  @StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable

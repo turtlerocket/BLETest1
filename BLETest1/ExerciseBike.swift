@@ -67,10 +67,11 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
         centralManager = CBCentralManager(delegate: self, queue: nil)
         
         // Start updating cadence and resistance every 2 seconds
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+  /*      Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.updateCadenceAndResistance()
         }
+   */
     }
     
     // Update cadence and resistance with realistic bike numbers
@@ -111,14 +112,14 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             let elapsedTime = currentTime.timeIntervalSince(startTime)
 
             // Update data with realistic values
-            let currentSpeed = self.exerciseData.speed
+   /*         let currentSpeed = self.exerciseData.speed
             let currentPower = currentSpeed * self.exerciseData.resistance
             self.exerciseData.currentPower = currentPower
-
+*/
             // Update total power and total distance only every second
             if Int(elapsedTime) % 1 == 0 {
-                self.exerciseData.totalPower += currentPower / 3600 // Power is in Watt-Hours
-                self.exerciseData.totalDistance += currentSpeed / 3600 // Distance is in units per second (e.g., kmeters/second)
+                self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt-Hours
+                self.exerciseData.totalDistance += self.exerciseData.speed / 3600 // Distance is in units per second (e.g., kmeters/second)
             }
 
             // Update elapsed time
@@ -244,7 +245,8 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
                     isLoading = false
                     self.exerciseData.cadence = Double((Int16(data[9]) << 8) + Int16(data[10]))
                     self.exerciseData.currentPower = calculatePower(cadence: self.exerciseData.cadence, resistance: Double(self.exerciseData.resistance))
-             //       print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
+                    print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
+                    updateCadenceAndResistance()
                 } else {
                     print("Error: Invalid data length for Cadence message")
                 }
@@ -255,6 +257,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
                     self.exerciseData.resistance = Double(data[3])
                     self.exerciseData.currentPower = calculatePower(cadence: self.exerciseData.cadence, resistance: self.exerciseData.resistance)
         //            print("  RESISTANCE: \(self.exerciseData.resistance)  cadence: \(self.exerciseData.cadence) power: \(self.exerciseData.currentPower)")
+                    updateCadenceAndResistance()
                 } else {
                     print("Error: Invalid data length for Resistance message")
                 }

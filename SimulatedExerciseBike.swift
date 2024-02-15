@@ -12,6 +12,7 @@ class SimulatedExerciseBike: ObservableObject {
     @Published var bikeMessage: String? = nil
     
     init() {
+        debugPrint("INITIALIZING - SimulatedExerciseBike")
         // Initialize with default values
         self.exerciseData = ExerciseBikeData()
         
