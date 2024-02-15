@@ -27,6 +27,7 @@ class SimulatedExerciseBike: ObservableObject {
     
     // Update cadence and resistance with realistic bike numbers
     private func updateCadenceAndResistance() {
+        isLoading = false
         let cadence = Double.random(in: 60...120) // Realistic cadence range
         let resistance = Double.random(in: 1...10) // Realistic resistance range
         

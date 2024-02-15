@@ -1,4 +1,5 @@
 import SwiftUI
+
 import UIKit
 
 // Main ContentView
@@ -45,64 +46,7 @@ struct ContentView: View {
 
                 Spacer()
 
-                LazyVGrid(columns: [
-                    GridItem(alignment: .center),
-                    GridItem(alignment: .leading)
-                ]) {
-                    VStack(alignment: .leading) {
-                        Text("Timer: \(viewModel.exerciseData.formattedTime)")
-                            .font(.system(size: widthSize - 5))
-                            .foregroundColor(Color.white) // Set font color to white
-                            .onChange(of: viewModel.exerciseData.elapsedTime) { _ in
-                                                            // Update the time of the last time change
-                                                            lastStateChangeTime = Date()
-                                                        }
-                        Text("Total Power: \(String(format: "%.2f", viewModel.exerciseData.totalPower))")
-                            .font(.system(size: widthSize - 5))
-                            .foregroundColor(Color.white) // Set font color to white
-                        Text("Distance: \(String(format: "%.2f", viewModel.exerciseData.totalDistance))")
-                            .font(.system(size: widthSize - 5))
-                            .foregroundColor(Color.white) // Set font color to white
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.black)
-                            .shadow(color: Color.white.opacity(0.2), radius: 5, x: -2, y: -2)
-                            .shadow(color: Color.black.opacity(0.7), radius: 5, x: 2, y: 2)
-                    )
-
-                    VStack(alignment: .leading) {
-                        Text("Cadence: \(Int(viewModel.exerciseData.cadence))")
-                            .font(.system(size: widthSize - 5))
-                            .foregroundColor(Color.white) // Set font color to white
-                            .onChange(of: viewModel.exerciseData.cadence) { _ in
-                                                            // Update the time of the last cadence change
-                                                            lastStateChangeTime = Date()
-                                                        }
-                        Text("Resistance: \(Int(viewModel.exerciseData.resistance))")
-                            .font(.system(size: widthSize - 5))
-                            .foregroundColor(Color.white) // Set font color to white
-                        Spacer()
-                        Text("Max Cadence: \(Int(viewModel.exerciseData.maximumCadence))")
-                            .font(.system(size: widthSize - 8)) // Smaller font
-                            .foregroundColor(Color.white) // Set font color to white
-                        Text("Max Power: \(Int(viewModel.exerciseData.maximumPower))")
-                            .font(.system(size: widthSize - 8)) // Smaller font
-                            .foregroundColor(Color.white) // Set font color to white
-                        Text("Max Speed: \(Int(viewModel.exerciseData.maximumSpeed))")
-                            .font(.system(size: widthSize - 8)) // Smaller font
-                            .foregroundColor(Color.white) // Set font color to white
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.black)
-                            .shadow(color: Color.white.opacity(0.2), radius: 5, x: -2, y: -2)
-                            .shadow(color: Color.black.opacity(0.7), radius: 5, x: 2, y: 2)
-                    )
-                }
-                .padding()
+                NeomorphicTable(viewModel: viewModel)
 
                 Spacer()
 
@@ -233,6 +177,102 @@ struct NeomorphicButtonStyle: ButtonStyle {
     }
 }
 
+struct NeomorphicTable: View {
+    @ObservedObject var viewModel: ExerciseBike
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                HStack {
+                    HeaderCell(text: "Timer")
+                    HeaderCell(text: "Distance")
+                    HeaderCell(text: "Total Power")
+                    HeaderCell(text: "Cadence")
+                    HeaderCell(text: "Resistance")
+                  
+                }
+                .padding(.vertical, 0)
+            
+
+                HStack {
+                    TableCell(text: viewModel.exerciseData.formattedTime, alignment: .center)
+                    TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalDistance), alignment: .center)
+                    TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalPower), alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.cadence))", alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.resistance))", alignment: .center)
+                }
+                .padding(.vertical, 8)
+                .neumorphicStyle()
+                
+                HStack {
+                    Spacer()
+                    HeaderCell(text: "")
+                    HeaderCell(text: "Cadence")
+                    HeaderCell(text: "Power")
+                    HeaderCell(text: "Speed")
+                }
+                .padding(.vertical, 0)
+            
+
+                HStack {
+                    Spacer()
+                    TableCell(text: "Max:", alignment: .trailing)
+                        .padding(.horizontal, 3)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumCadence))", alignment: .center)
+                        .padding(.vertical, 3)
+                        .neumorphicStyle()
+                    
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumPower))", alignment: .center)
+                        .padding(.vertical, 3)
+                        .neumorphicStyle()
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumSpeed))", alignment: .center)
+                        .padding(.vertical, 3)
+                        .neumorphicStyle()
+                }
+                    
+            }
+            .padding()
+        }
+    }
+}
+
+struct HeaderCell: View {
+    var text: String
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12))
+            .foregroundColor(Color.white)
+            .frame(maxWidth: .infinity, alignment: .bottom)
+            .padding(.bottom, 8)
+    }
+}
+
+struct TableCell: View {
+    var text: String
+    var alignment: Alignment
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 12))
+            .foregroundColor(Color.white)
+            .frame(maxWidth: .infinity, alignment: alignment)
+    }
+}
+// Neumorphic Style Modifier
+extension View {
+    func neumorphicStyle() -> some View {
+        self.padding()
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black)
+                    .shadow(color: Color.white.opacity(0.2), radius: 5, x: -2, y: -2)
+                    .shadow(color: Color.black.opacity(0.7), radius: 5, x: 2, y: 2)
+            )
+    }
+}
 
 struct BikeInfoView: View {
     let title: String
@@ -354,4 +394,5 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+    
 }
