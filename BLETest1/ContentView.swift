@@ -5,7 +5,10 @@ struct ContentView: View {
     @StateObject var viewModel = ExerciseBike()
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
+    @State private var lastStateChangeTime = Date()
 
+
+    
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
@@ -43,6 +46,10 @@ struct ContentView: View {
                         Text("Timer: \(viewModel.exerciseData.formattedTime)")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
+                            .onChange(of: viewModel.exerciseData.elapsedTime) { _ in
+                                                            // Update the time of the last time change
+                                                            lastStateChangeTime = Date()
+                                                        }
                         Text("Total Power: \(String(format: "%.2f", viewModel.exerciseData.totalPower))")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
@@ -62,6 +69,10 @@ struct ContentView: View {
                         Text("Cadence: \(Int(viewModel.exerciseData.cadence))")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
+                            .onChange(of: viewModel.exerciseData.cadence) { _ in
+                                                            // Update the time of the last cadence change
+                                                            lastStateChangeTime = Date()
+                                                        }
                         Text("Resistance: \(Int(viewModel.exerciseData.resistance))")
                             .font(.system(size: widthSize - 5))
                             .foregroundColor(Color.white) // Set font color to white
@@ -124,6 +135,20 @@ struct ContentView: View {
                 .padding()
             }
             .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
+            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                            let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
+                
+                            // Sleep app if no activity in last 600 seconds
+                            if timeDifference > 600 && UIScreen.main.brightness != 0 {
+                                UIScreen.main.brightness = 0
+                            }
+                        }
+                        .onTapGesture {
+                            if UIScreen.main.brightness == 0 {
+                                UIScreen.main.brightness = 1
+                                lastStateChangeTime = Date()
+                            }
+                        }
         }
         .onAppear {
             updateWidthSize()
