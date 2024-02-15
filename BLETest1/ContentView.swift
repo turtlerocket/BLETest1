@@ -3,7 +3,11 @@ import UIKit
 
 // Main ContentView
 struct ContentView: View {
-    @StateObject var viewModel = ExerciseBike()
+    // For now swap ExcerciseBike for SimulatedExerciseBike
+    // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
+   //     @StateObject var viewModel = ExerciseBike()
+    @StateObject var viewModel = SimulatedExerciseBike()
+
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
     // Defines how long before last state change - if more than 10 minutes, sleep screen

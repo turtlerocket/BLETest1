@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		603A95432B7E7D2000CD7C31 /* SimulatedExerciseBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603A95422B7E7D2000CD7C31 /* SimulatedExerciseBike.swift */; };
 		60448CD62B783E8100F5C853 /* ExerciseBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60448CD52B783E8000F5C853 /* ExerciseBike.swift */; };
 		60FC63E22B781CBF00A43B12 /* BLETest1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E12B781CBF00A43B12 /* BLETest1App.swift */; };
 		60FC63E42B781CBF00A43B12 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E32B781CBF00A43B12 /* ContentView.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		603A95422B7E7D2000CD7C31 /* SimulatedExerciseBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedExerciseBike.swift; sourceTree = "<group>"; };
 		60448CD52B783E8000F5C853 /* ExerciseBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBike.swift; sourceTree = "<group>"; };
 		60FC63DE2B781CBF00A43B12 /* BLETest1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BLETest1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FC63E12B781CBF00A43B12 /* BLETest1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLETest1App.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 		60FC63D52B781CBF00A43B12 = {
 			isa = PBXGroup;
 			children = (
+				603A95422B7E7D2000CD7C31 /* SimulatedExerciseBike.swift */,
 				60FC63E02B781CBF00A43B12 /* BLETest1 */,
 				60FC63F12B781CC200A43B12 /* BLETest1Tests */,
 				60FC63FB2B781CC200A43B12 /* BLETest1UITests */,
@@ -261,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60448CD62B783E8100F5C853 /* ExerciseBike.swift in Sources */,
+				603A95432B7E7D2000CD7C31 /* SimulatedExerciseBike.swift in Sources */,
 				60FC63E42B781CBF00A43B12 /* ContentView.swift in Sources */,
 				60FC63E22B781CBF00A43B12 /* BLETest1App.swift in Sources */,
 			);
