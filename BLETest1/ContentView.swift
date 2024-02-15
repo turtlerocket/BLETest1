@@ -1,12 +1,15 @@
 import SwiftUI
+import UIKit
 
 // Main ContentView
 struct ContentView: View {
     @StateObject var viewModel = ExerciseBike()
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
+    // Defines how long before last state change - if more than 10 minutes, sleep screen
     @State private var lastStateChangeTime = Date()
-
+    
+    @State private var isLoading = true
 
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -156,8 +159,18 @@ struct ContentView: View {
         .onChange(of: horizontalSizeClass) { _ in
             updateWidthSize()
         }
+        .overlay(
+            Group {
+                if viewModel.isLoading {
+                    LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading)
+                }
+            }
+        )
     }
-
+            
+    
+    
+    
     private func updateWidthSize() {
         if horizontalSizeClass == .compact && verticalSizeClass == .regular {
             widthSize = 20 // Adjust font size for compact width, regular height
@@ -275,7 +288,60 @@ struct GaugeView: View {
 }
 
 
+struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
+    @Binding var isLoading: Bool
 
+    func makeUIViewController(context: Context) -> UIViewController {
+        return LoadingViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        if isLoading {
+            (uiViewController as? LoadingViewController)?.showLoadingScreen()
+        } else {
+            (uiViewController as? LoadingViewController)?.removeLoadingScreen()
+        }
+    }
+}
+
+
+
+class LoadingViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupLoadingScreen()
+    }
+
+    func setupLoadingScreen() {
+        let loadingView = UIView(frame: UIScreen.main.bounds)
+        loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.color = .white
+        activityIndicator.center = loadingView.center
+        activityIndicator.startAnimating()
+        
+        loadingView.addSubview(activityIndicator)
+        view.addSubview(loadingView)
+    }
+    
+    func removeLoadingScreen() {
+        DispatchQueue.main.async {
+            self.view.subviews.filter({ $0 is UIView }).forEach({
+                $0.removeFromSuperview()
+            })
+        }
+    }
+    
+    
+    
+    func showLoadingScreen() {
+        DispatchQueue.main.async {
+            self.setupLoadingScreen()
+        }
+    }
+}
 
 
 

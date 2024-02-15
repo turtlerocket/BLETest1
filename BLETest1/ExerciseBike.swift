@@ -50,11 +50,15 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     private let notifyCharacteristicUUID2 = CBUUID(string: "0bf669f4-45f2-11e7-9598-0800200c9a66")
     
     @Published var exerciseData: ExerciseBikeData
+    @Published var bikeMessage: String? = nil
+    
     private var timer: Timer?
     private var startTime: Date?
     
     @Published var isTimerRunning = false // Track whether the timer is running
+    @Published var isLoading = true // True when finding and connecting bike to bluetooth; After successful connection, True
 
+    
     override init() {
         // Initialize with default values
         self.exerciseData = ExerciseBikeData()
@@ -165,9 +169,11 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
 // BLE code
     
     func startScan() {
+        isLoading = true
         centralManager.scanForPeripherals(withServices: [bikeUUID], options: nil)
    //     centralManager.scanForPeripherals(withServices: nil, options: nil)
         print("Scanning for exercise bike...")
+        bikeMessage = "Scanning for exercise bike..."
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -175,6 +181,8 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             startScan()
         } else {
             print("Bluetooth not available")
+            bikeMessage = "Bluetooth not available"
+            isLoading = true
         }
     }
     
@@ -186,6 +194,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             centralManager.stopScan()
             centralManager.connect(exercisePeripheral!)
             print("Exercise bike found, connecting...")
+            bikeMessage = "Exercise bike found, connecting..."
      //   }
     }
     
@@ -217,6 +226,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
                     print("ENABLE Broadcast for Exercise Bike \(characteristic)) \(data)")
 
                     peripheral.writeValue(data, for: characteristic, type: .withResponse)
+                    bikeMessage = nil
                 }
             }
         }
@@ -229,20 +239,22 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
   //          print("Received notification from characteristic \(characteristic): \(data) : \(notificationType)")
             
             if notificationType == 0xD1 {  // Cadence notification
-                print("CADENCE message: \(characteristic): \(data) : \(notificationType)")
+ //               print("CADENCE message: \(characteristic): \(data) : \(notificationType)")
                 if data.count >= 11 {
+                    isLoading = false
                     self.exerciseData.cadence = Double((Int16(data[9]) << 8) + Int16(data[10]))
                     self.exerciseData.currentPower = calculatePower(cadence: self.exerciseData.cadence, resistance: Double(self.exerciseData.resistance))
-                    print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
+             //       print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
                 } else {
                     print("Error: Invalid data length for Cadence message")
                 }
             } else if notificationType == 0xD2 {  // Resistance notification
                 print("Resistance message: \(characteristic): \(data) : \(notificationType)")
                 if data.count >= 4 {
+                    isLoading = false
                     self.exerciseData.resistance = Double(data[3])
                     self.exerciseData.currentPower = calculatePower(cadence: self.exerciseData.cadence, resistance: self.exerciseData.resistance)
-                    print("  RESISTANCE: \(self.exerciseData.resistance)  cadence: \(self.exerciseData.cadence) power: \(self.exerciseData.currentPower)")
+        //            print("  RESISTANCE: \(self.exerciseData.resistance)  cadence: \(self.exerciseData.cadence) power: \(self.exerciseData.currentPower)")
                 } else {
                     print("Error: Invalid data length for Resistance message")
                 }
