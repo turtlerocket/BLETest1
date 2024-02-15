@@ -6,8 +6,8 @@ import UIKit
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    @StateObject var viewModel = ExerciseBike()
-  //  @StateObject var viewModel = SimulatedExerciseBike()
+ //   @StateObject var viewModel = ExerciseBike()
+    @StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
@@ -178,7 +178,7 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-    @ObservedObject var viewModel: ExerciseBike
+    @ObservedObject var viewModel: SimulatedExerciseBike
 
     var body: some View {
         ScrollView {
@@ -196,13 +196,23 @@ struct NeomorphicTable: View {
 
                 HStack {
                     TableCell(text: viewModel.exerciseData.formattedTime, alignment: .center)
+                        .padding(.vertical, 1)
+                        .neumorphicStyle()
                     TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalDistance), alignment: .center)
+                        .padding(.vertical, 3)
+                        .neumorphicStyle()
                     TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalPower), alignment: .center)
+                        .padding(.vertical, 1)
+                        .neumorphicStyle()
                     TableCell(text: "\(Int(viewModel.exerciseData.cadence))", alignment: .center)
+                        .padding(.vertical, 1)
+                        .neumorphicStyle()
                     TableCell(text: "\(Int(viewModel.exerciseData.resistance))", alignment: .center)
+                        .padding(.vertical, 1)
+                        .neumorphicStyle()
                 }
-                .padding(.vertical, 8)
-                .neumorphicStyle()
+                
+                Spacer()
                 
                 HStack {
                     Spacer()
@@ -216,19 +226,19 @@ struct NeomorphicTable: View {
 
                 HStack {
                     Spacer()
-                    TableCell(text: "Max:", alignment: .trailing)
+                    HeaderCell(text: "Max:", alignment: .trailing)
                         .padding(.horizontal, 3)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     
                     TableCell(text: "\(Int(viewModel.exerciseData.maximumCadence))", alignment: .center)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 1)
                         .neumorphicStyle()
                     
                     TableCell(text: "\(Int(viewModel.exerciseData.maximumPower))", alignment: .center)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: "\(Int(viewModel.exerciseData.maximumSpeed))", alignment: .center)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 1)
                         .neumorphicStyle()
                 }
                     
@@ -240,12 +250,13 @@ struct NeomorphicTable: View {
 
 struct HeaderCell: View {
     var text: String
+    var alignment: Alignment = .bottom
 
     var body: some View {
         Text(text)
-            .font(.system(size: 12))
+            .font(.system(size: 15))
             .foregroundColor(Color.white)
-            .frame(maxWidth: .infinity, alignment: .bottom)
+            .frame(maxWidth: .infinity, alignment: alignment)
             .padding(.bottom, 8)
     }
 }
@@ -256,7 +267,7 @@ struct TableCell: View {
 
     var body: some View {
         Text(text)
-            .font(.system(size: 12))
+            .font(.system(size: 20))
             .foregroundColor(Color.white)
             .frame(maxWidth: .infinity, alignment: alignment)
     }

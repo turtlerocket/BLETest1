@@ -78,12 +78,12 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     private func updateCadenceAndResistance() {
     /*    let cadence = Double.random(in: 60...120) // Realistic cadence range
         let resistance = Double.random(in: 1...10) // Realistic resistance range
-        
-        // Check if new maximum values are reached and update accordingly
-        if cadence > exerciseData.maximumCadence {
-            exerciseData.maximumCadence = cadence
-        }
      */
+        // Check if new maximum values are reached and update accordingly
+        if self.exerciseData.cadence > exerciseData.maximumCadence {
+            exerciseData.maximumCadence = self.exerciseData.cadence
+        }
+     
      
   //      self.exerciseData.cadence = cadence
   //      self.exerciseData.resistance = resistance
