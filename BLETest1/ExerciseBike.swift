@@ -1,6 +1,4 @@
 // Works - captures cadence, resistance - calculates power.
-
-import SwiftUI
 import CoreBluetooth
 
 // Model data for exercise bike
@@ -50,7 +48,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     private let notifyCharacteristicUUID2 = CBUUID(string: "0bf669f4-45f2-11e7-9598-0800200c9a66")
     
     @Published var exerciseData: ExerciseBikeData
-    @Published var bikeMessage: String? = nil
+    @Published var bikeMessage: String = ""
     
     private var timer: Timer?
     private var startTime: Date?
@@ -174,7 +172,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
         centralManager.scanForPeripherals(withServices: [bikeUUID], options: nil)
    //     centralManager.scanForPeripherals(withServices: nil, options: nil)
         print("Scanning for exercise bike...")
-        bikeMessage = "Scanning for exercise bike..."
+        bikeMessage = "Scanning for exercise bike"
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -227,7 +225,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
                     print("ENABLE Broadcast for Exercise Bike \(characteristic)) \(data)")
 
                     peripheral.writeValue(data, for: characteristic, type: .withResponse)
-                    bikeMessage = nil
+                    bikeMessage = ""
                 }
             }
         }

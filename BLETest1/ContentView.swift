@@ -6,8 +6,8 @@ import UIKit
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
- //   @StateObject var viewModel = ExerciseBike()
-    @StateObject var viewModel = SimulatedExerciseBike()
+    @StateObject var viewModel = ExerciseBike()
+ //   @StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
@@ -110,7 +110,8 @@ struct ContentView: View {
         .overlay(
             Group {
                 if viewModel.isLoading {
-                    LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading)
+                    LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading,
+                                                       bikeMessage: $viewModel.bikeMessage)
                 }
             }
         )
@@ -178,7 +179,7 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-    @ObservedObject var viewModel: SimulatedExerciseBike
+    @ObservedObject var viewModel: ExerciseBike
 
     var body: some View {
         ScrollView {
@@ -345,15 +346,21 @@ struct GaugeView: View {
 
 struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
     @Binding var isLoading: Bool
-
+    @Binding var bikeMessage: String
+    
     func makeUIViewController(context: Context) -> UIViewController {
-        return LoadingViewController()
+        let loadingVC = LoadingViewController(bikeMessage: $bikeMessage)
+         
+        loadingVC.bikeMessage = self.$bikeMessage
+        return loadingVC
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if isLoading {
+       //     print("LOADING is TRUE")
             (uiViewController as? LoadingViewController)?.showLoadingScreen()
         } else {
+    //        print("LOADING is FALSE")
             (uiViewController as? LoadingViewController)?.removeLoadingScreen()
         }
     }
@@ -362,6 +369,17 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
 
 
 class LoadingViewController: UIViewController {
+    var bikeMessage: Binding<String>
+    
+    // Initializer that accepts a Binding<String>
+        init(bikeMessage: Binding<String>) {
+            self.bikeMessage = bikeMessage
+            super.init(nibName: nil, bundle: nil)
+        }
+    
+    required init?(coder: NSCoder) {
+           fatalError("init(coder:) has not been implemented")
+       }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -378,6 +396,19 @@ class LoadingViewController: UIViewController {
         activityIndicator.startAnimating()
         
         loadingView.addSubview(activityIndicator)
+        
+        // Add bike message label
+        let bikeMessageLabel = UILabel(frame: CGRect(x: 0, y: activityIndicator.frame.maxY + 20, width: 400, height: 50))
+        
+    //    print("LOADING SCREEN: bikeMessage:\(bikeMessage)")
+        bikeMessageLabel.text = bikeMessage.wrappedValue
+        bikeMessageLabel.textColor = .white
+        bikeMessageLabel.textAlignment = .center
+        bikeMessageLabel.center.x = loadingView.center.x
+        
+        loadingView.addSubview(bikeMessageLabel)
+        
+        
         view.addSubview(loadingView)
     }
     

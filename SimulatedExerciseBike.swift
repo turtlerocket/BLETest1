@@ -9,20 +9,28 @@ class SimulatedExerciseBike: ObservableObject {
     
     @Published var isTimerRunning = false // Track whether the timer is running
     @Published var isLoading = true // True when finding and connecting bike to bluetooth; After successful connection, True
-    @Published var bikeMessage: String? = nil
+    @Published var bikeMessage: String = ""
     
     init() {
         debugPrint("INITIALIZING - SimulatedExerciseBike")
         // Initialize with default values
         self.exerciseData = ExerciseBikeData()
         
+        // Simulate waiting 10 seconds for initialization
+        self.bikeMessage = "Initializing bike..."
+        
+   
+        
+                Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { timer in
+                    self.isLoading = false
+                    self.bikeMessage = ""
+                }
+        
         // Start updating cadence and resistance every 2 seconds
         Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.updateCadenceAndResistance()
         }
-        
-        isLoading = false
     }
     
     // Update cadence and resistance with realistic bike numbers
