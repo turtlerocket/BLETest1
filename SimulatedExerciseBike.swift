@@ -4,12 +4,12 @@ import SwiftUI
 // View model for handling data updates and calculations
 class SimulatedExerciseBike: ObservableObject {
     @Published var exerciseData: ExerciseBikeData
-    private var timer: Timer?
-    private var startTime: Date?
-    
     @Published var isTimerRunning = false // Track whether the timer is running
     @Published var isLoading = true // True when finding and connecting bike to bluetooth; After successful connection, True
     @Published var bikeMessage: String = ""
+    
+    private var timer: Timer?
+    private var startTime: Date?
     
     init() {
         debugPrint("INITIALIZING - SimulatedExerciseBike")

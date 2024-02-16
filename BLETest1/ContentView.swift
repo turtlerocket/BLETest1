@@ -2,19 +2,47 @@ import SwiftUI
 
 import UIKit
 
+enum GaugeSize {
+    static let small: Int = 200
+    static let medium: Int = 300
+    static let large: Int = 300
+}
+
+
+enum HeaderSize {
+    static let small: Int = 12
+    static let medium: Int = 13
+    static let large: Int = 18
+}
+
+enum MetricSize {
+    static let small: Int = 15
+    static let medium: Int = 15
+    static let large: Int = 20
+}
+
+
+var gaugeSize: Int = GaugeSize.medium
+
+ var headerSize: Int = HeaderSize.medium
+
+ var metricSize: Int = MetricSize.medium
+
+
 // Main ContentView
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
     @StateObject var viewModel = ExerciseBike()
- //   @StateObject var viewModel = SimulatedExerciseBike()
+   //@StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
-    @State private var widthSize: CGFloat = 10.0 // Declare widthSize as a state variable
+
     // Defines how long before last state change - if more than 10 minutes, sleep screen
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
+
 
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -26,7 +54,7 @@ struct ContentView: View {
                 ZStack {
                     Circle()
                         .fill(Color.black)
-                        .frame(width: 350, height: 350)
+                        .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
                         .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
                         .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
                     
@@ -34,7 +62,7 @@ struct ContentView: View {
                               minValue: 0,
                               maxValue: isSpeedDisplayed ? 40 : 1000,
                               unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
-                        .frame(width: 300, height: 300) // Set size of the gauge
+                        .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
                         .padding()
                         .font(.system(size: geometry.size.width * 0.05)) // Adjust font size based on width
                 }
@@ -85,8 +113,8 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
-            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+        .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                             let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
                 
                             // Sleep app if no activity in last 600 seconds
@@ -99,12 +127,16 @@ struct ContentView: View {
                                 UIScreen.main.brightness = 1
                                 lastStateChangeTime = Date()
                             }
+      
                         }
+            
         }
         .onAppear {
+            print("  onAppear")
             updateWidthSize()
         }
         .onChange(of: horizontalSizeClass) { _ in
+            print("  onChange HorizontalSizeClass:\(horizontalSizeClass)")
             updateWidthSize()
         }
         .overlay(
@@ -115,6 +147,7 @@ struct ContentView: View {
                 }
             }
         )
+ 
     }
             
     
@@ -122,11 +155,37 @@ struct ContentView: View {
     
     private func updateWidthSize() {
         if horizontalSizeClass == .compact && verticalSizeClass == .regular {
-            widthSize = 20 // Adjust font size for compact width, regular height
+            // iPhone portrait layout
+            print("DISPLAY: iPhone portrait")
+            gaugeSize = GaugeSize.small
+            headerSize = HeaderSize.small
+            metricSize = MetricSize.small
+            
+        } else if horizontalSizeClass == .compact && verticalSizeClass == .compact {
+            // iPhone landscape layout
+            print("DISPLAY: iPhone landscape")
+            print("DISPLAY: iPhone portrait")
+            gaugeSize = GaugeSize.small
+            headerSize = HeaderSize.small
+            metricSize = MetricSize.small
+            
+    
+        } else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
+            // iPad portrait and landscape layout
+            print("DISPLAY: iPad landscape or portrait")
+            print("DISPLAY: iPhone portrait")
+            gaugeSize = GaugeSize.large
+            headerSize = HeaderSize.large
+            metricSize = MetricSize.large
         } else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
-            widthSize = 40
+            // iPhone SOMETHING
+            print("DISPLAY: iPhone something")
+            gaugeSize = GaugeSize.medium
+            headerSize = HeaderSize.medium
+            metricSize = MetricSize.medium
         } else {
-            widthSize = 30 // Default font size for other size classes
+            // iPhone SOMETHING
+            print("DISPLAY: Unknown")
         }
     }
 }
@@ -137,18 +196,18 @@ struct SpeedPowerToggle: View {
     var body: some View {
         HStack {
             Text("Powermeter")
-                .font(.system(size: 15))
+                .font(.system(size: CGFloat(headerSize)))
                 .foregroundColor(isSpeedDisplayed ? .gray : .white) // Set font color based on isSpeedDisplayed
-                .padding(.trailing, 15) // Apply trailing padding for Speed label
+                .padding(.trailing, CGFloat(headerSize)) // Apply trailing padding for Speed label
 
             Toggle("", isOn: $isSpeedDisplayed)
                 .labelsHidden()
                 .padding(.horizontal, 5) // Adjust horizontal padding for the Toggle button
 
             Text("Speedometer")
-                .font(.system(size: 15))
+                .font(.system(size: CGFloat(headerSize)))
                 .foregroundColor(isSpeedDisplayed ? .white : .gray) // Set font color based on isSpeedDisplayed
-                .padding(.leading, 15) // Apply leading padding for Power label
+                .padding(.leading, CGFloat(headerSize)) // Apply leading padding for Power label
         }
         .padding(20) // Apply padding around the HStack
         .frame(maxWidth: .infinity)
@@ -179,6 +238,7 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
+//    @ObservedObject var viewModel: SimulatedExerciseBike
     @ObservedObject var viewModel: ExerciseBike
 
     var body: some View {
@@ -189,7 +249,7 @@ struct NeomorphicTable: View {
                     HeaderCell(text: "Distance")
                     HeaderCell(text: "Total Power")
                     HeaderCell(text: "Cadence")
-                    HeaderCell(text: "Resistance")
+                    HeaderCell(text: "Level")
                   
                 }
                 .padding(.vertical, 0)
@@ -199,13 +259,13 @@ struct NeomorphicTable: View {
                     TableCell(text: viewModel.exerciseData.formattedTime, alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalDistance), alignment: .center)
+                    TableCell(text: String(format: "%.2f km", viewModel.exerciseData.totalDistance), alignment: .center)
                         .padding(.vertical, 3)
                         .neumorphicStyle()
-                    TableCell(text: String(format: "%.2f", viewModel.exerciseData.totalPower), alignment: .center)
+                    TableCell(text: String(format: "%.2f watts", viewModel.exerciseData.totalPower), alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: "\(Int(viewModel.exerciseData.cadence))", alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.cadence)) rpm", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: "\(Int(viewModel.exerciseData.resistance))", alignment: .center)
@@ -231,14 +291,14 @@ struct NeomorphicTable: View {
                         .padding(.horizontal, 3)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     
-                    TableCell(text: "\(Int(viewModel.exerciseData.maximumCadence))", alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumCadence)) rpm", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                     
-                    TableCell(text: "\(Int(viewModel.exerciseData.maximumPower))", alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumPower)) watts", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: "\(Int(viewModel.exerciseData.maximumSpeed))", alignment: .center)
+                    TableCell(text: "\(Int(viewModel.exerciseData.maximumSpeed)) kph", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                 }
@@ -255,10 +315,10 @@ struct HeaderCell: View {
 
     var body: some View {
         Text(text)
-            .font(.system(size: 15))
+            .font(.system(size: CGFloat(headerSize)))
             .foregroundColor(Color.white)
             .frame(maxWidth: .infinity, alignment: alignment)
-            .padding(.bottom, 8)
+            .padding(.bottom, 3)
     }
 }
 
@@ -268,7 +328,7 @@ struct TableCell: View {
 
     var body: some View {
         Text(text)
-            .font(.system(size: 20))
+            .font(.system(size: CGFloat(metricSize)))
             .foregroundColor(Color.white)
             .frame(maxWidth: .infinity, alignment: alignment)
     }
@@ -336,7 +396,7 @@ struct GaugeView: View {
     
     // Calculate font size based on the dimensions of the Circle
     private func circleFontSize() -> CGFloat {
-        let radius = CGFloat(150) // Set the radius of the Circle
+        let radius = CGFloat(gaugeSize/2) // Set the radius of the Circle
         let circumference = 2 * CGFloat.pi * radius // Calculate the circumference
         let fontSize = circumference / CGFloat(unit.count) // Adjust font size based on the length of the unit
         return fontSize
