@@ -2,39 +2,37 @@ import SwiftUI
 
 import UIKit
 
+// Global variablees and enums for UI Gauge, Header, and Bike Metrics
+
 enum GaugeSize {
     static let small: Int = 200
     static let medium: Int = 300
     static let large: Int = 300
 }
 
-
 enum HeaderSize {
     static let small: Int = 12
     static let medium: Int = 13
-    static let large: Int = 18
+    static let large: Int = 20
 }
 
 enum MetricSize {
     static let small: Int = 15
     static let medium: Int = 15
-    static let large: Int = 20
+    static let large: Int = 25
 }
 
-
 var gaugeSize: Int = GaugeSize.medium
-
- var headerSize: Int = HeaderSize.medium
-
- var metricSize: Int = MetricSize.medium
+var headerSize: Int = HeaderSize.medium
+var metricSize: Int = MetricSize.medium
 
 
 // Main ContentView
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    @StateObject var viewModel = ExerciseBike()
-   //@StateObject var viewModel = SimulatedExerciseBike()
+  @StateObject var viewModel = ExerciseBike()
+//   @StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
 
@@ -42,94 +40,182 @@ struct ContentView: View {
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
-
-
+    @State private var isIPhoneLandscape: Bool = false
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                ZStack {
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
-                        .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
-                        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
-                    
-                    GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
-                              minValue: 0,
-                              maxValue: isSpeedDisplayed ? 40 : 1000,
-                              unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
+        
+        GeometryReader {    geometry in
+            if (!isIPhoneLandscape) {
+                VStack {
+                    ZStack {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
+                            .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
+                            .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                        
+                        GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
+                                  minValue: 0,
+                                  maxValue: isSpeedDisplayed ? 40 : 1000,
+                                  unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
                         .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
                         .padding()
                         .font(.system(size: geometry.size.width * 0.05)) // Adjust font size based on width
-                }
-
-                Spacer()
-
-                SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
+                    }
+                    
+                    Spacer()
+                    
+                    SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
+                        .padding()
+                    
+                    Spacer()
+                    
+                    NeomorphicTable(viewModel: viewModel)
+                    
+                    Spacer()
+                    
+                    // Buttons for start/pause and reset
+                    HStack {
+                        Spacer()
+                        if viewModel.isTimerRunning {
+                            Button(action: {
+                                viewModel.stopTimer()
+                            }) {
+                                Image(systemName: "pause.fill") // Use system image for Pause action
+                                    .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                            }
+                            .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
+                        } else {
+                            Button(action: {
+                                viewModel.startTimer()
+                            }) {
+                                Image(systemName: "play.fill") // Use system image for Start action
+                                    .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                            }
+                            .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.green, fontColor: Color.white)) // Apply neomorphic button style
+                        }
+                        
+                        Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
+                        
+                        Button(action: {
+                            viewModel.resetTimer()
+                        }) {
+                            Text("Reset")
+                                .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                        }
+                        .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white)) // Apply neomorphic button style
+                        
+                        Spacer()
+                    }
                     .padding()
-
-                Spacer()
-
-                NeomorphicTable(viewModel: viewModel)
-
-                Spacer()
-
-                // Buttons for start/pause and reset
-                HStack {
-                    Spacer()
-                    if viewModel.isTimerRunning {
-                        Button(action: {
-                            viewModel.stopTimer()
-                        }) {
-                            Image(systemName: "pause.fill") // Use system image for Pause action
-                                .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
-                        }
-                        .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
-                    } else {
-                        Button(action: {
-                            viewModel.startTimer()
-                        }) {
-                            Image(systemName: "play.fill") // Use system image for Start action
-                                .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
-                        }
-                        .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.green, fontColor: Color.white)) // Apply neomorphic button style
-                    }
-
-                    Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
-
-                    Button(action: {
-                        viewModel.resetTimer()
-                    }) {
-                        Text("Reset")
-                            .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
-                    }
-                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white)) // Apply neomorphic button style
-
-                    Spacer()
                 }
-                .padding()
+                .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
+                .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                    let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
+                    
+                    // Sleep app if no activity in last 600 seconds
+                    if timeDifference > 600 && UIScreen.main.brightness != 0 {
+                        UIScreen.main.brightness = 0
+                    }
+                }
+                .onTapGesture {
+                    if UIScreen.main.brightness == 0 {
+                        UIScreen.main.brightness = 1
+                        lastStateChangeTime = Date()
+                    }
+                    
+                }
             }
-        .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                            let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
-                
-                            // Sleep app if no activity in last 600 seconds
-                            if timeDifference > 600 && UIScreen.main.brightness != 0 {
-                                UIScreen.main.brightness = 0
+                else {
+                    // If IPhone is landscape mode do this horizontal view
+                    HStack {
+                        VStack {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.black)
+                                    .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
+                                    .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
+                                    .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+                                
+                                GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
+                                          minValue: 0,
+                                          maxValue: isSpeedDisplayed ? 40 : 1000,
+                                          unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
+                                .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
+                                .padding()
+                                .font(.system(size: geometry.size.width * 0.05)) // Adjust font size based on width
                             }
+                            
+                            Spacer()
+                            
+                            SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
+                                .padding()
+                            
                         }
-                        .onTapGesture {
-                            if UIScreen.main.brightness == 0 {
-                                UIScreen.main.brightness = 1
-                                lastStateChangeTime = Date()
+                        
+                        VStack {
+                            NeomorphicTable(viewModel: viewModel)
+                            
+                            Spacer()
+                            
+                            // Buttons for start/pause and reset
+                            HStack {
+                                Spacer()
+                                if viewModel.isTimerRunning {
+                                    Button(action: {
+                                        viewModel.stopTimer()
+                                    }) {
+                                        Image(systemName: "pause.fill") // Use system image for Pause action
+                                            .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                                    }
+                                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
+                                } else {
+                                    Button(action: {
+                                        viewModel.startTimer()
+                                    }) {
+                                        Image(systemName: "play.fill") // Use system image for Start action
+                                            .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                                    }
+                                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.green, fontColor: Color.white)) // Apply neomorphic button style
+                                }
+                                
+                                Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
+                                
+                                Button(action: {
+                                    viewModel.resetTimer()
+                                }) {
+                                    Text("Reset")
+                                        .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                                }
+                                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white)) // Apply neomorphic button style
+                                
+                                Spacer()
                             }
-      
+                            .padding()
                         }
-            
+                        Spacer()
+                    
+                    }
+                    .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
+                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                        let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
+                        
+                        // Sleep app if no activity in last 600 seconds
+                        if timeDifference > 600 && UIScreen.main.brightness != 0 {
+                            UIScreen.main.brightness = 0
+                        }
+                    }
+                    .onTapGesture {
+                        if UIScreen.main.brightness == 0 {
+                            UIScreen.main.brightness = 1
+                            lastStateChangeTime = Date()
+                        }
+                        
+                    }
+                }
         }
         .onAppear {
             print("  onAppear")
@@ -161,31 +247,35 @@ struct ContentView: View {
             headerSize = HeaderSize.small
             metricSize = MetricSize.small
             
+            isIPhoneLandscape = false
+            
         } else if horizontalSizeClass == .compact && verticalSizeClass == .compact {
             // iPhone landscape layout
             print("DISPLAY: iPhone landscape")
-            print("DISPLAY: iPhone portrait")
             gaugeSize = GaugeSize.small
             headerSize = HeaderSize.small
             metricSize = MetricSize.small
+            isIPhoneLandscape = true
             
     
         } else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
             // iPad portrait and landscape layout
             print("DISPLAY: iPad landscape or portrait")
-            print("DISPLAY: iPhone portrait")
             gaugeSize = GaugeSize.large
             headerSize = HeaderSize.large
             metricSize = MetricSize.large
+            isIPhoneLandscape = false
         } else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
             // iPhone SOMETHING
             print("DISPLAY: iPhone something")
             gaugeSize = GaugeSize.medium
             headerSize = HeaderSize.medium
             metricSize = MetricSize.medium
+            isIPhoneLandscape = false
         } else {
             // iPhone SOMETHING
             print("DISPLAY: Unknown")
+            isIPhoneLandscape = false
         }
     }
 }
@@ -260,7 +350,7 @@ struct NeomorphicTable: View {
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: String(format: "%.2f km", viewModel.exerciseData.totalDistance), alignment: .center)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: String(format: "%.2f watts", viewModel.exerciseData.totalPower), alignment: .center)
                         .padding(.vertical, 1)
