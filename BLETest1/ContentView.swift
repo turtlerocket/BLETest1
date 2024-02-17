@@ -31,8 +31,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-      @StateObject var viewModel = ExerciseBike()
-   // @StateObject var viewModel = SimulatedExerciseBike()
+   //   @StateObject var viewModel = ExerciseBike()
+    @StateObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -268,7 +268,8 @@ struct SettingsView: View {
     @Binding var isVisible: Bool
     @State private var selectedTimeFormat = 12
     @State private var selectedDistanceUnit = "km"
-    @State private var powerMultiplier = ""
+
+    
     @State private var errorMessage = ""
     
     var body: some View {
@@ -280,21 +281,32 @@ struct SettingsView: View {
                 Spacer()
             }
             
-            Picker("Time Format", selection: $selectedTimeFormat) {
-                Text("12").tag(12)
-                Text("24").tag(24)
+            Form {
+                Section {
+                    HStack {
+                        Text("Time")
+                            .frame(width: 50, alignment: .trailing) // Label with right justification
+                        Picker("", selection: $selectedTimeFormat) {
+                            Text("12 hour").tag(12)
+                            Text("24 hour").tag(24)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    
+                    HStack {
+                        Text("Units")
+                            .frame(width: 50, alignment: .trailing) // Label with right justification
+                        Picker("", selection: $selectedDistanceUnit) {
+                            Text("kilometers").tag("km")
+                            Text("miles").tag("mi")
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                }
+                
+               
             }
             .padding()
-            
-            Picker("Distance Unit", selection: $selectedDistanceUnit) {
-                Text("km").tag("km")
-                Text("mi").tag("mi")
-            }
-            .padding()
-            
-            TextField("Power Multiplier", text: $powerMultiplier)
-                .padding()
-                .keyboardType(.decimalPad)
             
             Text(errorMessage)
                 .foregroundColor(.red)
@@ -302,23 +314,14 @@ struct SettingsView: View {
             
             HStack {
                 Spacer()
+                
                 Button("Cancel") {
                     isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
-                
-                
                 Button("Save") {
-                    if let powerValue = Double(powerMultiplier), powerValue >= 0 {
-                        // Save settings
-                        print("Time Format: \(selectedTimeFormat)")
-                        print("Distance Unit: \(selectedDistanceUnit)")
-                        print("Power Multiplier: \(powerMultiplier)")
-                        isVisible = false
-                    } else {
-                        errorMessage = "Invalid power multiplier"
-                    }
+                        print("SAVE PRESSED")
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
@@ -390,15 +393,33 @@ struct SpeedPowerToggle: View {
 struct NeomorphicButtonStyle: ButtonStyle {
     let buttonColor: Color
     let fontColor: Color
+    let isRectangle: Bool
+    
+    init(buttonColor: Color, fontColor: Color, isRectangle: Bool = true) {
+          self.buttonColor = buttonColor
+          self.fontColor = fontColor
+          self.isRectangle = isRectangle
+      }
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(buttonColor)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 2, y: 2)
-                    .shadow(color: Color.white.opacity(0.7), radius: 5, x: -2, y: -2)
+                Group {
+                    if isRectangle {
+                        
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(buttonColor)
+                            .shadow(color: Color.black.opacity(0.2), radius: 5, x: 2, y: 2)
+                            .shadow(color: Color.white.opacity(0.7), radius: 5, x: -2, y: -2)
+                        
+                    }  else {
+                        Circle()
+                            .fill(buttonColor)
+                            .shadow(color: Color.black.opacity(0.2), radius: 5, x: 2, y: 2)
+                            .shadow(color: Color.white.opacity(0.7), radius: 5, x: -2, y: -2)
+                    }
+                }
             )
             .foregroundColor(fontColor)
             .font(.headline)
@@ -407,8 +428,8 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-   // @ObservedObject var viewModel: SimulatedExerciseBike
-        @ObservedObject var viewModel: ExerciseBike
+    @ObservedObject var viewModel: SimulatedExerciseBike
+   //     @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ScrollView {
@@ -537,8 +558,8 @@ struct BikeInfoView: View {
 
 struct GaugeWidget: View {
     @Binding var isSpeedDisplayed: Bool
-//    @ObservedObject var viewModel: SimulatedExerciseBike
-        @ObservedObject var viewModel: ExerciseBike
+    @ObservedObject var viewModel: SimulatedExerciseBike
+//        @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ZStack {
