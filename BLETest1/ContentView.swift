@@ -31,8 +31,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    //  @StateObject var viewModel = ExerciseBike()
-    @StateObject var viewModel = SimulatedExerciseBike()
+      @StateObject var viewModel = ExerciseBike()
+   // @StateObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -182,7 +182,6 @@ struct ContentView: View {
                         UIScreen.main.brightness = 0
                     }
                 }
-                
                 .overlay {
                     // Gear button
                     SettingButton(isSettingsVisible: $isSettingsVisible)
@@ -408,8 +407,8 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-    @ObservedObject var viewModel: SimulatedExerciseBike
-    //    @ObservedObject var viewModel: ExerciseBike
+   // @ObservedObject var viewModel: SimulatedExerciseBike
+        @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ScrollView {
@@ -538,8 +537,8 @@ struct BikeInfoView: View {
 
 struct GaugeWidget: View {
     @Binding var isSpeedDisplayed: Bool
-    @ObservedObject var viewModel: SimulatedExerciseBike
-    //    @ObservedObject var viewModel: ExerciseBike
+//    @ObservedObject var viewModel: SimulatedExerciseBike
+        @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ZStack {

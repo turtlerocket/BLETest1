@@ -109,19 +109,15 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             let currentTime = Date()
             let elapsedTime = currentTime.timeIntervalSince(startTime)
 
-            // Update data with realistic values
-   /*         let currentSpeed = self.exerciseData.speed
-            let currentPower = currentSpeed * self.exerciseData.resistance
-            self.exerciseData.currentPower = currentPower
-*/
             // Update total power and total distance only every second
             if Int(elapsedTime) % 1 == 0 {
-                self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt-Hours
+                self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt/second
                 self.exerciseData.totalDistance += self.exerciseData.speed / 3600 // Distance is in units per second (e.g., kmeters/second)
+                
+                // Update elapsed time
+                self.exerciseData.elapsedTime = elapsedTime
             }
 
-            // Update elapsed time
-            self.exerciseData.elapsedTime = elapsedTime
         }
         
         isTimerRunning = true
