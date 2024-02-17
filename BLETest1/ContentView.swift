@@ -31,43 +31,29 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-//  @StateObject var viewModel = ExerciseBike()
-  @StateObject var viewModel = SimulatedExerciseBike()
-
+    //  @StateObject var viewModel = ExerciseBike()
+    @StateObject var viewModel = SimulatedExerciseBike()
+    
     @State private var isSpeedDisplayed = true // Toggle between speed and power
-
+    
     // Defines how long before last state change - if more than 10 minutes, sleep screen
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
     @State private var isIPhoneLandscape: Bool = false
-
+    
     
     @State private var isSettingsVisible = false
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
-
+    
     var body: some View {
         
         GeometryReader {    geometry in
             if (!isIPhoneLandscape) {
                 VStack {
-                    ZStack {
-                        Circle()
-                            .fill(Color.black)
-                            .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
-                            .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
-                            .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
-                        
-                        GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
-                                  minValue: 0,
-                                  maxValue: isSpeedDisplayed ? 40 : 1000,
-                                  unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
-                        .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
-                        .padding()
-                        .font(.system(size: geometry.size.width * 0.05)) // Adjust font size based on width
-                    }
+                    GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: viewModel)
                     
                     Spacer()
                     
@@ -115,7 +101,7 @@ struct ContentView: View {
                     }
                     .padding()
                     
-                   
+                    
                 }
                 .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
@@ -128,126 +114,80 @@ struct ContentView: View {
                 }
                 .overlay {
                     // Gear button
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                isSettingsVisible.toggle()
-                            }) {
-                                Image(systemName: "gear")
-                                    .foregroundColor(.white)
-                                    .padding() // Adjust padding to increase button size
-                                
-                            }
-                            .padding(.top, 0)
-                            .font(.system(size: 20))
-                            .padding(.trailing, 0)
-                        }
-                        Spacer()
-                    }
+                    SettingButton(isSettingsVisible: $isSettingsVisible)
                 }
             }
-                else {
-                    // If IPhone is landscape mode do this horizontal view
-                    HStack {
-                        VStack {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.black)
-                                    .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
-                                    .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
-                                    .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
-                                
-                                GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
-                                          minValue: 0,
-                                          maxValue: isSpeedDisplayed ? 40 : 1000,
-                                          unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
-                                .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
-                                .padding()
-                                .font(.system(size: geometry.size.width * 0.05)) // Adjust font size based on width
-                            }
-                            
-                            Spacer()
-                            
-                            SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
-                                .padding()
-                            
-                        }
+            else {
+                // If IPhone is landscape mode do this horizontal view
+                HStack {
+                    VStack {
+                        GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: viewModel)
                         
-                        VStack {
-                            NeomorphicTable(viewModel: viewModel)
-                            
+                        Spacer()
+                        
+                        SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
+                            .padding()
+                        
+                    }
+                    
+                    VStack {
+                        NeomorphicTable(viewModel: viewModel)
+                        
+                        Spacer()
+                        
+                        // Buttons for start/pause and reset
+                        HStack {
                             Spacer()
-                            
-                            // Buttons for start/pause and reset
-                            HStack {
-                                Spacer()
-                                if viewModel.isTimerRunning {
-                                    Button(action: {
-                                        viewModel.stopTimer()
-                                    }) {
-                                        Image(systemName: "pause.fill") // Use system image for Pause action
-                                            .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
-                                    }
-                                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
-                                } else {
-                                    Button(action: {
-                                        viewModel.startTimer()
-                                    }) {
-                                        Image(systemName: "play.fill") // Use system image for Start action
-                                            .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
-                                    }
-                                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.green, fontColor: Color.white)) // Apply neomorphic button style
-                                }
-                                
-                                Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
-                                
+                            if viewModel.isTimerRunning {
                                 Button(action: {
-                                    viewModel.resetTimer()
+                                    viewModel.stopTimer()
                                 }) {
-                                    Text("Reset")
+                                    Image(systemName: "pause.fill") // Use system image for Pause action
                                         .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
                                 }
-                                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white)) // Apply neomorphic button style
-                                
-                                Spacer()
-                            }
-                            .padding()
-                        }
-                        Spacer()
-                    
-                    }
-                    .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
-                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                        let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
-                        
-                        // Sleep app if no activity in last 600 seconds
-                        if timeDifference > 600 && UIScreen.main.brightness != 0 {
-                            UIScreen.main.brightness = 0
-                        }
-                    }
-     
-                    .overlay {
-                        // Gear button
-                        VStack {
-                            HStack {
-                                Spacer()
+                                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
+                            } else {
                                 Button(action: {
-                                    isSettingsVisible.toggle()
+                                    viewModel.startTimer()
                                 }) {
-                                    Image(systemName: "gear")
-                                        .foregroundColor(.white)
-                                        .padding() // Adjust padding to increase button size
-                                    
+                                    Image(systemName: "play.fill") // Use system image for Start action
+                                        .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
                                 }
-                                .padding(.top, 0)
-                                .font(.system(size: 20))
-                                .padding(.trailing, 0)
+                                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.green, fontColor: Color.white)) // Apply neomorphic button style
                             }
+                            
+                            Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
+                            
+                            Button(action: {
+                                viewModel.resetTimer()
+                            }) {
+                                Text("Reset")
+                                    .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
+                            }
+                            .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white)) // Apply neomorphic button style
+                            
                             Spacer()
                         }
+                        .padding()
+                    }
+                    Spacer()
+                    
+                }
+                .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
+                .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                    let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
+                    
+                    // Sleep app if no activity in last 600 seconds
+                    if timeDifference > 600 && UIScreen.main.brightness != 0 {
+                        UIScreen.main.brightness = 0
                     }
                 }
+                
+                .overlay {
+                    // Gear button
+                    SettingButton(isSettingsVisible: $isSettingsVisible)
+                }
+            }
             
         }
         .onAppear {
@@ -271,16 +211,16 @@ struct ContentView: View {
                     LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading,
                                                        bikeMessage: $viewModel.bikeMessage)
                 }
-               
+                
             }
         )
         .fullScreenCover(isPresented: $isSettingsVisible) {
-                    // Present your SettingsView here
-                    SettingsView(isVisible: $isSettingsVisible)
-                }
- 
+            // Present your SettingsView here
+            SettingsView(isVisible: $isSettingsVisible)
+        }
+        
     }
-            
+    
     
     
     
@@ -302,7 +242,7 @@ struct ContentView: View {
             metricSize = MetricSize.small
             isIPhoneLandscape = true
             
-    
+            
         } else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
             // iPad portrait and landscape layout
             print("DISPLAY: iPad landscape or portrait")
@@ -331,7 +271,7 @@ struct SettingsView: View {
     @State private var selectedDistanceUnit = "km"
     @State private var powerMultiplier = ""
     @State private var errorMessage = ""
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -340,35 +280,36 @@ struct SettingsView: View {
                     .padding()
                 Spacer()
             }
-
+            
             Picker("Time Format", selection: $selectedTimeFormat) {
                 Text("12").tag(12)
                 Text("24").tag(24)
             }
             .padding()
-
+            
             Picker("Distance Unit", selection: $selectedDistanceUnit) {
                 Text("km").tag("km")
                 Text("mi").tag("mi")
             }
             .padding()
-
+            
             TextField("Power Multiplier", text: $powerMultiplier)
                 .padding()
                 .keyboardType(.decimalPad)
-
+            
             Text(errorMessage)
                 .foregroundColor(.red)
                 .padding()
-
+            
             HStack {
+                Spacer()
                 Button("Cancel") {
                     isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
-
-                Spacer()
-
+                
+                
+                
                 Button("Save") {
                     if let powerValue = Double(powerMultiplier), powerValue >= 0 {
                         // Save settings
@@ -381,6 +322,8 @@ struct SettingsView: View {
                     }
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
+                
+                Spacer()
             }
             .padding(.horizontal) // Adjust horizontal padding
             .padding(.bottom) // Add bottom padding
@@ -392,22 +335,45 @@ struct SettingsView: View {
     }
 }
 
-
+struct SettingButton : View {
+    @Binding var isSettingsVisible: Bool
+    
+    var body: some View {
+        // Gear button
+        VStack {
+            HStack {
+                Button(action: {
+                    isSettingsVisible.toggle()
+                }) {
+                    Image(systemName: "gear")
+                        .foregroundColor(.white)
+                        .padding() // Adjust padding to increase button size
+                    
+                }
+                .font(.system(size: CGFloat(Double(metricSize) * 1.5)))
+                .padding(.leading) // Add leading padding to position the button to the right
+                
+                Spacer()
+            }
+            Spacer()
+        }
+    }
+}
 
 struct SpeedPowerToggle: View {
     @Binding var isSpeedDisplayed: Bool
-
+    
     var body: some View {
         HStack {
             Text("Powermeter")
                 .font(.system(size: CGFloat(headerSize)))
                 .foregroundColor(isSpeedDisplayed ? .gray : .white) // Set font color based on isSpeedDisplayed
                 .padding(.trailing, CGFloat(headerSize)) // Apply trailing padding for Speed label
-
+            
             Toggle("", isOn: $isSpeedDisplayed)
                 .labelsHidden()
                 .padding(.horizontal, 5) // Adjust horizontal padding for the Toggle button
-
+            
             Text("Speedometer")
                 .font(.system(size: CGFloat(headerSize)))
                 .foregroundColor(isSpeedDisplayed ? .white : .gray) // Set font color based on isSpeedDisplayed
@@ -425,7 +391,7 @@ struct SpeedPowerToggle: View {
 struct NeomorphicButtonStyle: ButtonStyle {
     let buttonColor: Color
     let fontColor: Color
-
+    
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .padding()
@@ -443,8 +409,8 @@ struct NeomorphicButtonStyle: ButtonStyle {
 
 struct NeomorphicTable: View {
     @ObservedObject var viewModel: SimulatedExerciseBike
-//    @ObservedObject var viewModel: ExerciseBike
-
+    //    @ObservedObject var viewModel: ExerciseBike
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -454,11 +420,11 @@ struct NeomorphicTable: View {
                     HeaderCell(text: "Total Power")
                     HeaderCell(text: "Cadence")
                     HeaderCell(text: "Level")
-                  
+                    
                 }
                 .padding(.vertical, 0)
-            
-
+                
+                
                 HStack {
                     TableCell(text: viewModel.exerciseData.formattedTime, alignment: .center)
                         .padding(.vertical, 1)
@@ -487,8 +453,8 @@ struct NeomorphicTable: View {
                     HeaderCell(text: "Speed")
                 }
                 .padding(.vertical, 0)
-            
-
+                
+                
                 HStack {
                     Spacer()
                     HeaderCell(text: "Max:", alignment: .trailing)
@@ -506,7 +472,7 @@ struct NeomorphicTable: View {
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                 }
-                    
+                
             }
             .padding()
         }
@@ -516,7 +482,7 @@ struct NeomorphicTable: View {
 struct HeaderCell: View {
     var text: String
     var alignment: Alignment = .bottom
-
+    
     var body: some View {
         Text(text)
             .font(.system(size: CGFloat(headerSize)))
@@ -529,7 +495,7 @@ struct HeaderCell: View {
 struct TableCell: View {
     var text: String
     var alignment: Alignment
-
+    
     var body: some View {
         Text(text)
             .font(.system(size: CGFloat(metricSize)))
@@ -553,7 +519,7 @@ extension View {
 struct BikeInfoView: View {
     let title: String
     let value: Double
-
+    
     var body: some View {
         VStack {
             Text(title)
@@ -570,13 +536,37 @@ struct BikeInfoView: View {
     }
 }
 
+struct GaugeWidget: View {
+    @Binding var isSpeedDisplayed: Bool
+    @ObservedObject var viewModel: SimulatedExerciseBike
+    //    @ObservedObject var viewModel: ExerciseBike
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.black)
+                .frame(width: CGFloat(gaugeSize + 50), height: CGFloat(gaugeSize + 50))
+                .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
+                .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+            
+            GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
+                      minValue: 0,
+                      maxValue: isSpeedDisplayed ? 40 : 1000,
+                      unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
+            .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
+            .padding()
+            .font(.system(size: CGFloat(metricSize * 2))) // Adjust font size based on width
+        }
+    }
+}
+
 
 struct GaugeView: View {
     var value: Double
     var minValue: Double
     var maxValue: Double
     var unit: String // Unit of measurement (e.g., kph, watts)
-
+    
     var body: some View {
         ZStack {
             Circle()
@@ -614,17 +604,17 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIViewController {
         let loadingVC = LoadingViewController(bikeMessage: $bikeMessage)
-         
+        
         loadingVC.bikeMessage = self.$bikeMessage
         return loadingVC
     }
-
+    
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if isLoading {
-       //     print("LOADING is TRUE")
+            //     print("LOADING is TRUE")
             (uiViewController as? LoadingViewController)?.showLoadingScreen()
         } else {
-    //        print("LOADING is FALSE")
+            //        print("LOADING is FALSE")
             (uiViewController as? LoadingViewController)?.removeLoadingScreen()
         }
     }
@@ -636,20 +626,20 @@ class LoadingViewController: UIViewController {
     var bikeMessage: Binding<String>
     
     // Initializer that accepts a Binding<String>
-        init(bikeMessage: Binding<String>) {
-            self.bikeMessage = bikeMessage
-            super.init(nibName: nil, bundle: nil)
-        }
+    init(bikeMessage: Binding<String>) {
+        self.bikeMessage = bikeMessage
+        super.init(nibName: nil, bundle: nil)
+    }
     
     required init?(coder: NSCoder) {
-           fatalError("init(coder:) has not been implemented")
-       }
-
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLoadingScreen()
     }
-
+    
     func setupLoadingScreen() {
         let loadingView = UIView(frame: UIScreen.main.bounds)
         loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
@@ -664,7 +654,7 @@ class LoadingViewController: UIViewController {
         // Add bike message label
         let bikeMessageLabel = UILabel(frame: CGRect(x: 0, y: activityIndicator.frame.maxY + 20, width: 400, height: 50))
         
-    //    print("LOADING SCREEN: bikeMessage:\(bikeMessage)")
+        //    print("LOADING SCREEN: bikeMessage:\(bikeMessage)")
         bikeMessageLabel.text = bikeMessage.wrappedValue
         bikeMessageLabel.textColor = .white
         bikeMessageLabel.textAlignment = .center
