@@ -31,8 +31,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-  @StateObject var viewModel = ExerciseBike()
-//   @StateObject var viewModel = SimulatedExerciseBike()
+//  @StateObject var viewModel = ExerciseBike()
+  @StateObject var viewModel = SimulatedExerciseBike()
 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
 
@@ -41,6 +41,9 @@ struct ContentView: View {
     
     @State private var isLoading = true
     @State private var isIPhoneLandscape: Bool = false
+
+    
+    @State private var isSettingsVisible = false
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -111,6 +114,8 @@ struct ContentView: View {
                         Spacer()
                     }
                     .padding()
+                    
+                   
                 }
                 .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
@@ -121,12 +126,25 @@ struct ContentView: View {
                         UIScreen.main.brightness = 0
                     }
                 }
-                .onTapGesture {
-                    if UIScreen.main.brightness == 0 {
-                        UIScreen.main.brightness = 1
-                        lastStateChangeTime = Date()
+                .overlay {
+                    // Gear button
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                isSettingsVisible.toggle()
+                            }) {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.white)
+                                    .padding() // Adjust padding to increase button size
+                                
+                            }
+                            .padding(.top, 0)
+                            .font(.system(size: 20))
+                            .padding(.trailing, 0)
+                        }
+                        Spacer()
                     }
-                    
                 }
             }
                 else {
@@ -208,14 +226,29 @@ struct ContentView: View {
                             UIScreen.main.brightness = 0
                         }
                     }
-                    .onTapGesture {
-                        if UIScreen.main.brightness == 0 {
-                            UIScreen.main.brightness = 1
-                            lastStateChangeTime = Date()
+     
+                    .overlay {
+                        // Gear button
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Button(action: {
+                                    isSettingsVisible.toggle()
+                                }) {
+                                    Image(systemName: "gear")
+                                        .foregroundColor(.white)
+                                        .padding() // Adjust padding to increase button size
+                                    
+                                }
+                                .padding(.top, 0)
+                                .font(.system(size: 20))
+                                .padding(.trailing, 0)
+                            }
+                            Spacer()
                         }
-                        
                     }
                 }
+            
         }
         .onAppear {
             print("  onAppear")
@@ -225,14 +258,26 @@ struct ContentView: View {
             print("  onChange HorizontalSizeClass:\(horizontalSizeClass)")
             updateWidthSize()
         }
+        .onTapGesture {
+            if UIScreen.main.brightness == 0 {
+                UIScreen.main.brightness = 1
+                lastStateChangeTime = Date()
+            }
+            
+        }
         .overlay(
             Group {
                 if viewModel.isLoading {
                     LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading,
                                                        bikeMessage: $viewModel.bikeMessage)
                 }
+               
             }
         )
+        .fullScreenCover(isPresented: $isSettingsVisible) {
+                    // Present your SettingsView here
+                    SettingsView(isVisible: $isSettingsVisible)
+                }
  
     }
             
@@ -279,6 +324,75 @@ struct ContentView: View {
         }
     }
 }
+
+struct SettingsView: View {
+    @Binding var isVisible: Bool
+    @State private var selectedTimeFormat = 12
+    @State private var selectedDistanceUnit = "km"
+    @State private var powerMultiplier = ""
+    @State private var errorMessage = ""
+
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Settings")
+                    .font(.title)
+                    .padding()
+                Spacer()
+            }
+
+            Picker("Time Format", selection: $selectedTimeFormat) {
+                Text("12").tag(12)
+                Text("24").tag(24)
+            }
+            .padding()
+
+            Picker("Distance Unit", selection: $selectedDistanceUnit) {
+                Text("km").tag("km")
+                Text("mi").tag("mi")
+            }
+            .padding()
+
+            TextField("Power Multiplier", text: $powerMultiplier)
+                .padding()
+                .keyboardType(.decimalPad)
+
+            Text(errorMessage)
+                .foregroundColor(.red)
+                .padding()
+
+            HStack {
+                Button("Cancel") {
+                    isVisible = false
+                }
+                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
+
+                Spacer()
+
+                Button("Save") {
+                    if let powerValue = Double(powerMultiplier), powerValue >= 0 {
+                        // Save settings
+                        print("Time Format: \(selectedTimeFormat)")
+                        print("Distance Unit: \(selectedDistanceUnit)")
+                        print("Power Multiplier: \(powerMultiplier)")
+                        isVisible = false
+                    } else {
+                        errorMessage = "Invalid power multiplier"
+                    }
+                }
+                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
+            }
+            .padding(.horizontal) // Adjust horizontal padding
+            .padding(.bottom) // Add bottom padding
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+        .cornerRadius(20)
+        .shadow(radius: 10)
+    }
+}
+
+
 
 struct SpeedPowerToggle: View {
     @Binding var isSpeedDisplayed: Bool
@@ -328,8 +442,8 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-//    @ObservedObject var viewModel: SimulatedExerciseBike
-    @ObservedObject var viewModel: ExerciseBike
+    @ObservedObject var viewModel: SimulatedExerciseBike
+//    @ObservedObject var viewModel: ExerciseBike
 
     var body: some View {
         ScrollView {

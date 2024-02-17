@@ -55,7 +55,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     
     @Published var isTimerRunning = false // Track whether the timer is running
     @Published var isLoading = true // True when finding and connecting bike to bluetooth; After successful connection, True
-
+    
     
     override init() {
         // Initialize with default values
@@ -192,8 +192,8 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             exercisePeripheral?.delegate = self
             centralManager.stopScan()
             centralManager.connect(exercisePeripheral!)
-            print("Exercise bike found, connecting...")
-            bikeMessage = "Exercise bike found, connecting..."
+            print("Excehlon bike found, connecting...")
+            bikeMessage = "Echelon bike found, connecting..."
      //   }
     }
     
