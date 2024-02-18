@@ -64,8 +64,7 @@ class ExerciseBike: ObservableObject {
     
     
     init() {
-        print("CREATING Echelon Exercise Model")
-        // Initialize with default values
+       print("Init ExerciseBike")
         self.exerciseData = ExerciseBikeData()
         
         // Accessing the shared instance of ConfigurationManager
@@ -77,16 +76,11 @@ class ExerciseBike: ObservableObject {
         
         print("isWattUnit:", self.isWattUnit)
         print("isKMUnit:", self.isKMUnit)
-
     }
     
     // Separated connectDevice from init because I cannot send self ExerciseBike to BluetoothManager until all self initialized; this is circular
     public func connectDevice() {
-        // Setup bluetooth manager
-        if self.bluetoothMgr == nil {
-            print("CREATING Bluetooth Manager")
-            self.bluetoothMgr = EchelonBluetoothManager(viewModel: self)
-        }
+        print("connectDevice ExerciseBike")
     }
     
     public func setMessage(message: String ) {
@@ -175,7 +169,7 @@ class ExerciseBike: ObservableObject {
     }
     
     // Calculate speed from cadence and resistance
-    public func calculateSpeed(cadence: Double, resistance: Double) -> Double {
+   public func calculateSpeed(cadence: Double, resistance: Double) -> Double {
         // Implement your speed calculation logic here
         // Example calculation: speed = (cadence * resistance) / 10
         //   return (cadence * resistance)/10
@@ -184,8 +178,6 @@ class ExerciseBike: ObservableObject {
   //The 2.5 is an exponent. I did the same thing as you, but I think the formula appears differently on // web/iPhone/Android. Works much better as an exponent!
         return pow(10 * self.exerciseData.currentPower, 0.4)
     }
-    
-    
 
 }
 
