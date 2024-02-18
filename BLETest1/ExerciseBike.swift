@@ -80,7 +80,8 @@ class ExerciseBike: ObservableObject {
     
     // Separated connectDevice from init because I cannot send self ExerciseBike to BluetoothManager until all self initialized; this is circular
     public func connectDevice() {
-        print("connectDevice ExerciseBike")
+        print("ConnectDevice ExerciseBike")
+        fatalError("connectDevice MUST be implemented by sub-class")
     }
     
     public func setMessage(message: String ) {
