@@ -34,6 +34,8 @@ class ConfigurationManager {
     private init() {
         // Initialize default values if configuration is not set
         UserDefaults.standard.register(defaults: [isWattUnitKey: true, isKMUnitKey: true])
+        
+        
     }
     
     // Function to save changes to UserDefaults

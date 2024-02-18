@@ -26,13 +26,12 @@ var gaugeSize: Int = GaugeSize.medium
 var headerSize: Int = HeaderSize.medium
 var metricSize: Int = MetricSize.medium
 
-
 // Main ContentView
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-   //   @StateObject var viewModel = ExerciseBike()
-    @StateObject var viewModel = SimulatedExerciseBike()
+    @ObservedObject var viewModel = ExerciseBike()
+   // @StateObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -42,12 +41,15 @@ struct ContentView: View {
     @State private var isLoading = true
     @State private var isIPhoneLandscape: Bool = false
     
-    
     @State private var isSettingsVisible = false
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     
+    init() {
+        viewModel.connectDevice()
+    }
+
     var body: some View {
         
         GeometryReader {    geometry in
@@ -271,8 +273,9 @@ struct SettingsView: View {
    
     @State private var errorMessage = ""
     
-    @StateObject var viewModel: SimulatedExerciseBike
-    
+ // @StateObject var viewModel: SimulatedExerciseBike
+  @StateObject var viewModel: ExerciseBike
+
     var body: some View {
         VStack {
             Text("Settings")
@@ -470,8 +473,8 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
-    @ObservedObject var viewModel: SimulatedExerciseBike
-   //     @ObservedObject var viewModel: ExerciseBike
+ //  @ObservedObject var viewModel: SimulatedExerciseBike
+       @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ScrollView {
@@ -600,8 +603,8 @@ struct BikeInfoView: View {
 
 struct GaugeWidget: View {
     @Binding var isSpeedDisplayed: Bool
-    @ObservedObject var viewModel: SimulatedExerciseBike
-//        @ObservedObject var viewModel: ExerciseBike
+//    @ObservedObject var viewModel: SimulatedExerciseBike
+        @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ZStack {

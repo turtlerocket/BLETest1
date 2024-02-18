@@ -11,6 +11,7 @@
 		60448CD62B783E8100F5C853 /* ExerciseBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60448CD52B783E8000F5C853 /* ExerciseBike.swift */; };
 		60B72D792B7EDAC90020EAF6 /* EchelonBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */; };
 		60B72D832B81A2160020EAF6 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */; };
+		60B72D892B81C9260020EAF6 /* EchelonBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */; };
 		60FC63E22B781CBF00A43B12 /* BLETest1App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E12B781CBF00A43B12 /* BLETest1App.swift */; };
 		60FC63E42B781CBF00A43B12 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E32B781CBF00A43B12 /* ContentView.swift */; };
 		60FC63E62B781CC200A43B12 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60FC63E52B781CC200A43B12 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 		60448CD52B783E8000F5C853 /* ExerciseBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBike.swift; sourceTree = "<group>"; };
 		60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBike.swift; sourceTree = "<group>"; };
 		60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
+		60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBluetoothManager.swift; sourceTree = "<group>"; };
 		60FC63DE2B781CBF00A43B12 /* BLETest1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BLETest1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FC63E12B781CBF00A43B12 /* BLETest1App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLETest1App.swift; sourceTree = "<group>"; };
 		60FC63E32B781CBF00A43B12 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		60FC63D52B781CBF00A43B12 = {
 			isa = PBXGroup;
 			children = (
+				60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */,
 				60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */,
 				603A95422B7E7D2000CD7C31 /* SimulatedExerciseBike.swift */,
 				60FC63E02B781CBF00A43B12 /* BLETest1 */,
@@ -275,6 +278,7 @@
 				60FC63E42B781CBF00A43B12 /* ContentView.swift in Sources */,
 				60B72D792B7EDAC90020EAF6 /* EchelonBike.swift in Sources */,
 				60FC63E22B781CBF00A43B12 /* BLETest1App.swift in Sources */,
+				60B72D892B81C9260020EAF6 /* EchelonBluetoothManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

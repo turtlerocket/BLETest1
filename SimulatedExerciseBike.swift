@@ -44,6 +44,10 @@ class SimulatedExerciseBike: ObservableObject {
         }
     }
     
+    // Separated connectDevice from init because I cannot send self ExerciseBike to BluetoothManager until all self initialized; this is circular
+    public func connectDevice() {
+    }
+    
     // Update cadence and resistance with realistic bike numbers
     private func updateCadenceAndResistance() {
         isLoading = false
