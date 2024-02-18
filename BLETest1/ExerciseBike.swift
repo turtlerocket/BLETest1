@@ -11,6 +11,10 @@ struct ExerciseBikeData {
     var totalDistance: Double
     var elapsedTime: TimeInterval // Elapsed time in seconds
     
+    var is12Time: Bool
+    
+    var isKMUnit : Bool
+    
     // Properties to track maximum values
     var maximumCadence: Double
     var maximumSpeed: Double
@@ -20,6 +24,8 @@ struct ExerciseBikeData {
         let hours = Int(elapsedTime) / 3600
         let minutes = Int(elapsedTime) / 60 % 60
         let seconds = Int(elapsedTime) % 60
+        
+       
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
     
@@ -34,6 +40,9 @@ struct ExerciseBikeData {
         self.maximumCadence = 0
         self.maximumSpeed = 0
         self.maximumPower = 0
+        
+        self.is12Time = true
+        self.isKMUnit = true
     }
 }
 
@@ -48,6 +57,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     private let notifyCharacteristicUUID2 = CBUUID(string: "0bf669f4-45f2-11e7-9598-0800200c9a66")
     
     @Published var exerciseData: ExerciseBikeData
+
     @Published var bikeMessage: String = ""
     
     private var timer: Timer?
@@ -56,12 +66,26 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
     @Published var isTimerRunning = false // Track whether the timer is running
     @Published var isLoading = true // True when finding and connecting bike to bluetooth; After successful connection, True
     
+    @Published var isWattUnit: Bool
+    @Published var isKMUnit: Bool
+
     
     override init() {
         // Initialize with default values
         self.exerciseData = ExerciseBikeData()
         
+        // Accessing the shared instance of ConfigurationManager
+        let configMgr = ConfigurationManager.shared
+        
+        // Accessing configuration settings
+        self.isWattUnit = configMgr.isWattUnit
+        self.isKMUnit = configMgr.isKMUnit
+     
         super.init()
+        
+        print("isWattUnit:", self.isWattUnit)
+        print("isKMUnit:", self.isKMUnit)
+        
         centralManager = CBCentralManager(delegate: self, queue: nil)
         
         // Start updating cadence and resistance every 2 seconds
@@ -109,6 +133,7 @@ class ExerciseBike: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
             let currentTime = Date()
             let elapsedTime = currentTime.timeIntervalSince(startTime)
 
+            // TODO: Fix bug when app is running background, but the total power and distance odes not accumulate
             // Update total power and total distance only every second
             if Int(elapsedTime) % 1 == 0 {
                 self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt/second

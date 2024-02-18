@@ -215,7 +215,7 @@ struct ContentView: View {
         )
         .fullScreenCover(isPresented: $isSettingsVisible) {
             // Present your SettingsView here
-            SettingsView(isVisible: $isSettingsVisible)
+            SettingsView(isVisible: $isSettingsVisible, viewModel: viewModel)
         }
         
     }
@@ -266,47 +266,51 @@ struct ContentView: View {
 
 struct SettingsView: View {
     @Binding var isVisible: Bool
-    @State private var selectedTimeFormat = 12
-    @State private var selectedDistanceUnit = "km"
-
-    
+    @State private var selectedPowerFormat = ConfigurationManager.shared.isWattUnit ? "watt" : "joule"
+    @State private var selectedDistanceUnit = ConfigurationManager.shared.isKMUnit ? "km" : "mi"
+   
     @State private var errorMessage = ""
+    
+    @StateObject var viewModel: SimulatedExerciseBike
     
     var body: some View {
         VStack {
-            HStack {
-                Text("Settings")
-                    .font(.title)
-                    .padding()
-                Spacer()
-            }
+            Text("Settings")
+                .foregroundColor(.white)
+                .font(.title)
+                .padding()
+            
+            Spacer()
             
             Form {
                 Section {
                     HStack {
-                        Text("Time")
-                            .frame(width: 50, alignment: .trailing) // Label with right justification
-                        Picker("", selection: $selectedTimeFormat) {
-                            Text("12 hour").tag(12)
-                            Text("24 hour").tag(24)
+                        Spacer()
+                        Text("Power")
+                            .frame(width: 50, alignment: .trailing)
+                        Picker("", selection: $selectedPowerFormat) {
+                            Text("Watt").tag("watt")
+                            Text("Joule").tag("joule")
                         }
                         .pickerStyle(SegmentedPickerStyle())
+                        Spacer()
                     }
                     
                     HStack {
-                        Text("Units")
-                            .frame(width: 50, alignment: .trailing) // Label with right justification
+                        Spacer()
+                        Text("Unit")
+                            .frame(width: 50, alignment: .trailing)
                         Picker("", selection: $selectedDistanceUnit) {
-                            Text("kilometers").tag("km")
-                            Text("miles").tag("mi")
+                            Text("Kilometer").tag("km")
+                            Text("Mile").tag("mi")
                         }
                         .pickerStyle(SegmentedPickerStyle())
+                        Spacer()
                     }
                 }
-                
-               
             }
             .padding()
+            .background(neomorphicBackground)
             
             Text(errorMessage)
                 .foregroundColor(.red)
@@ -316,24 +320,62 @@ struct SettingsView: View {
                 Spacer()
                 
                 Button("Cancel") {
+               
+                    
                     isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
                 Button("Save") {
-                        print("SAVE PRESSED")
+                    print("SAVE PRESSED")
+                    
+                    // Accessing the shared instance of ConfigurationManager
+                    let configMgr = ConfigurationManager.shared
+                
+                    // Check the selected time format
+                    if selectedPowerFormat == "watt" {
+                            print("Watt format selected")
+                            configMgr.isWattUnit = true
+                    } else if selectedPowerFormat == "joule" {
+                            print("Joule format selected")
+                            configMgr.isWattUnit = false
+                        
+                    }
+                    
+                    // Check the distance format
+                    if selectedDistanceUnit == "km" {
+                            print("KM format selected")
+                            configMgr.isKMUnit = true
+                    } else if selectedDistanceUnit == "mi" {
+                            print("Mile format selected")
+                            configMgr.isKMUnit = false
+                        
+                    }
+                    
+                    configMgr.saveChanges()
+                    
+                    
+                    isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
                 Spacer()
             }
-            .padding(.horizontal) // Adjust horizontal padding
-            .padding(.bottom) // Add bottom padding
+            .padding(.horizontal)
+            .padding(.bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
         .cornerRadius(20)
-        .shadow(radius: 10)
+        .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
+        .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+    }
+    
+    var neomorphicBackground: some View {
+        RoundedRectangle(cornerRadius: 20)
+            .fill(Color.black)
+            .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
+            .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
     }
 }
 
