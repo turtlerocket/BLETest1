@@ -11,10 +11,6 @@ struct ExerciseBikeData {
     var totalDistance: Double
     var elapsedTime: TimeInterval // Elapsed time in seconds
     
-    var is12Time: Bool
-    
-    var isKMUnit : Bool
-    
     // Properties to track maximum values
     var maximumCadence: Double
     var maximumSpeed: Double
@@ -40,9 +36,6 @@ struct ExerciseBikeData {
         self.maximumCadence = 0
         self.maximumSpeed = 0
         self.maximumPower = 0
-        
-        self.is12Time = true
-        self.isKMUnit = true
     }
 }
 

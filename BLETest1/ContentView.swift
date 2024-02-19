@@ -30,8 +30,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    @ObservedObject var viewModel = EchelonBike()
- //   @ObservedObject var viewModel = SimulatedExerciseBike()
+      @ObservedObject var viewModel = EchelonBike()
+//    @ObservedObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -49,7 +49,7 @@ struct ContentView: View {
     init() {
         viewModel.connectDevice()
     }
-
+    
     var body: some View {
         
         GeometryReader {    geometry in
@@ -270,12 +270,11 @@ struct SettingsView: View {
     @Binding var isVisible: Bool
     @State private var selectedPowerFormat = ConfigurationManager.shared.isWattUnit ? "watt" : "joule"
     @State private var selectedDistanceUnit = ConfigurationManager.shared.isKMUnit ? "km" : "mi"
-   
+    
     @State private var errorMessage = ""
     
- // @StateObject var viewModel: SimulatedExerciseBike
-  @StateObject var viewModel: ExerciseBike
-
+    @ObservedObject var viewModel: ExerciseBike
+    
     var body: some View {
         VStack {
             Text("Settings")
@@ -287,7 +286,7 @@ struct SettingsView: View {
             
             Form {
                 Section {
-                    HStack {
+                   /* HStack {
                         Spacer()
                         Text("Power")
                             .frame(width: 50, alignment: .trailing)
@@ -297,7 +296,7 @@ struct SettingsView: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         Spacer()
-                    }
+                    }*/
                     
                     HStack {
                         Spacer()
@@ -323,7 +322,7 @@ struct SettingsView: View {
                 Spacer()
                 
                 Button("Cancel") {
-               
+                    
                     
                     isVisible = false
                 }
@@ -334,26 +333,32 @@ struct SettingsView: View {
                     
                     // Accessing the shared instance of ConfigurationManager
                     let configMgr = ConfigurationManager.shared
-                
+                    
                     // Check the selected time format
                     if selectedPowerFormat == "watt" {
-                            print("Watt format selected")
-                            configMgr.isWattUnit = true
+                        print("Watt format selected")
+                        configMgr.isWattUnit = true
+                        viewModel.isWattUnit = true
                     } else if selectedPowerFormat == "joule" {
-                            print("Joule format selected")
-                            configMgr.isWattUnit = false
+                        print("Joule format selected")
+                        configMgr.isWattUnit = false
+                        viewModel.isWattUnit = false
                         
                     }
                     
                     // Check the distance format
                     if selectedDistanceUnit == "km" {
-                            print("KM format selected")
-                            configMgr.isKMUnit = true
+                        print("KM format selected")
+                        configMgr.isKMUnit = true
+                        viewModel.isKMUnit = true
                     } else if selectedDistanceUnit == "mi" {
-                            print("Mile format selected")
-                            configMgr.isKMUnit = false
+                        print("Mile format selected")
+                        configMgr.isKMUnit = false
+                        viewModel.isKMUnit = false
                         
                     }
+                    
+                    
                     
                     configMgr.saveChanges()
                     
@@ -441,10 +446,10 @@ struct NeomorphicButtonStyle: ButtonStyle {
     let isRectangle: Bool
     
     init(buttonColor: Color, fontColor: Color, isRectangle: Bool = true) {
-          self.buttonColor = buttonColor
-          self.fontColor = fontColor
-          self.isRectangle = isRectangle
-      }
+        self.buttonColor = buttonColor
+        self.fontColor = fontColor
+        self.isRectangle = isRectangle
+    }
     
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
@@ -473,8 +478,7 @@ struct NeomorphicButtonStyle: ButtonStyle {
 }
 
 struct NeomorphicTable: View {
- //  @ObservedObject var viewModel: SimulatedExerciseBike
-       @ObservedObject var viewModel: ExerciseBike
+    @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ScrollView {
@@ -494,7 +498,7 @@ struct NeomorphicTable: View {
                     TableCell(text: viewModel.exerciseData.formattedTime, alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: String(format: "%.2f km", viewModel.exerciseData.totalDistance), alignment: .center)
+                    TableCell(text: String(format: "%.2f \(viewModel.isKMUnit ? "km" : "mi")", convertDistance(viewModel.exerciseData.totalDistance)), alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: String(format: "%.2f watts", viewModel.exerciseData.totalPower), alignment: .center)
@@ -533,7 +537,7 @@ struct NeomorphicTable: View {
                     TableCell(text: "\(Int(viewModel.exerciseData.maximumPower)) watts", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: "\(Int(viewModel.exerciseData.maximumSpeed)) kph", alignment: .center)
+                    TableCell(text: "\(Int(convertSpeed(viewModel.exerciseData.maximumSpeed))) \(viewModel.isKMUnit ? "km/h" : "mi/h")", alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                 }
@@ -542,7 +546,28 @@ struct NeomorphicTable: View {
             .padding()
         }
     }
+    
+    func convertSpeed(_ speed: Double) -> Double {
+        if self.viewModel.isKMUnit {
+            // Speed is already in KM
+            return speed
+        } else {
+            // Convert KM to MI
+            return speed * 0.621371
+        }
+    }
+    
+    func convertDistance(_ distance: Double) -> Double {
+            if self.viewModel.isKMUnit {
+                // Distance is already in KM
+                return distance
+            } else {
+                // Convert KM to MI
+                return distance * 0.621371
+            }
+        }
 }
+
 
 struct HeaderCell: View {
     var text: String
@@ -603,8 +628,8 @@ struct BikeInfoView: View {
 
 struct GaugeWidget: View {
     @Binding var isSpeedDisplayed: Bool
-//    @ObservedObject var viewModel: SimulatedExerciseBike
-        @ObservedObject var viewModel: ExerciseBike
+    //   @Binding var isKMFlag: Bool // Flag to determine if speed is in KM or MI
+    @ObservedObject var viewModel: ExerciseBike
     
     var body: some View {
         ZStack {
@@ -614,13 +639,26 @@ struct GaugeWidget: View {
                 .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
                 .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
             
-            GaugeView(value: isSpeedDisplayed ? viewModel.exerciseData.speed : viewModel.exerciseData.currentPower,
+            GaugeView(value: isSpeedDisplayed ? convertSpeed(viewModel.exerciseData.speed) : viewModel.exerciseData.currentPower,
                       minValue: 0,
-                      maxValue: isSpeedDisplayed ? 40 : 1000,
-                      unit: isSpeedDisplayed ? "kph" : "watts") // kph: kilometers per hour, wph: watts per hour
+                      maxValue: isSpeedDisplayed ? (viewModel.isKMUnit ? 40 : 24.8548) : 1000,
+                      unit: isSpeedDisplayed ? (viewModel.isKMUnit ? "km/h" : "mi/h") : "watts")
             .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
             .padding()
             .font(.system(size: CGFloat(metricSize * 2))) // Adjust font size based on width
+        }
+    }
+    
+    func convertSpeed(_ speed: Double) -> Double {
+        if self.viewModel.isKMUnit {
+        //    print("GaugeWidget: Unit is KM convert")
+            
+            // Speed is already in KM
+            return speed
+        } else {
+          //  print("GaugeWidget: Unit is miles convert")
+            // Convert KM to MI
+            return speed * 0.621371
         }
     }
 }
