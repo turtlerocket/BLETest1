@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/benjamindai/dev/BLETest1/BLETest1/Simple Spin.xcodeproj">
    </FileRef>
 </Workspace>
