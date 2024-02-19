@@ -268,9 +268,9 @@ struct ContentView: View {
 
 struct SettingsView: View {
     @Binding var isVisible: Bool
-    @State private var selectedPowerFormat = ConfigurationManager.shared.isWattUnit ? "watt" : "joule"
+
     @State private var selectedDistanceUnit = ConfigurationManager.shared.isKMUnit ? "km" : "mi"
-    
+    @State private var selectedSleepTime =      ConfigurationManager.shared.sleepTime
     @State private var errorMessage = ""
     
     @ObservedObject var viewModel: ExerciseBike
@@ -286,18 +286,6 @@ struct SettingsView: View {
             
             Form {
                 Section {
-                   /* HStack {
-                        Spacer()
-                        Text("Power")
-                            .frame(width: 50, alignment: .trailing)
-                        Picker("", selection: $selectedPowerFormat) {
-                            Text("Watt").tag("watt")
-                            Text("Joule").tag("joule")
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        Spacer()
-                    }*/
-                    
                     HStack {
                         Spacer()
                         Text("Unit")
@@ -309,6 +297,20 @@ struct SettingsView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         Spacer()
                     }
+                }
+                
+                Section(header: Text("")) {
+                    Picker("Sleep Time", selection: $selectedSleepTime) {
+                        Text("1 min").tag(1)
+                        Text("5 min").tag(5)
+                        Text("10 min").tag(10)
+                        Text("15 min").tag(15)
+                        Text("30 min").tag(30)
+                        Text("45 min").tag(45)
+                        Text("60 min").tag(60)
+                        Text("Never").tag(-1)
+                    }
+                    .pickerStyle(MenuPickerStyle())
                 }
             }
             .padding()
@@ -322,46 +324,30 @@ struct SettingsView: View {
                 Spacer()
                 
                 Button("Cancel") {
-                    
-                    
                     isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
                 Button("Save") {
-                    print("SAVE PRESSED")
-                    
                     // Accessing the shared instance of ConfigurationManager
                     let configMgr = ConfigurationManager.shared
                     
-                    // Check the selected time format
-                    if selectedPowerFormat == "watt" {
-                        print("Watt format selected")
-                        configMgr.isWattUnit = true
-                        viewModel.isWattUnit = true
-                    } else if selectedPowerFormat == "joule" {
-                        print("Joule format selected")
-                        configMgr.isWattUnit = false
-                        viewModel.isWattUnit = false
-                        
-                    }
-                    
                     // Check the distance format
                     if selectedDistanceUnit == "km" {
-                        print("KM format selected")
                         configMgr.isKMUnit = true
                         viewModel.isKMUnit = true
                     } else if selectedDistanceUnit == "mi" {
-                        print("Mile format selected")
                         configMgr.isKMUnit = false
                         viewModel.isKMUnit = false
-                        
                     }
                     
+                    // Set sleep time
+                    configMgr.sleepTime = selectedSleepTime
                     
+                    // Save sleep time setting
+                    configMgr.sleepTime = selectedSleepTime
                     
                     configMgr.saveChanges()
-                    
                     
                     isVisible = false
                 }
@@ -386,6 +372,7 @@ struct SettingsView: View {
             .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
     }
 }
+
 
 struct SettingButton : View {
     @Binding var isSettingsVisible: Bool
