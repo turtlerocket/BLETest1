@@ -30,8 +30,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-//      @ObservedObject var viewModel = EchelonBike()
-    @ObservedObject var viewModel = SimulatedExerciseBike()
+    @ObservedObject var viewModel = EchelonBike()
+//    @ObservedObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
