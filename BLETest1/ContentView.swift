@@ -30,8 +30,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-      @ObservedObject var viewModel = EchelonBike()
-//    @ObservedObject var viewModel = SimulatedExerciseBike()
+//      @ObservedObject var viewModel = EchelonBike()
+    @ObservedObject var viewModel = SimulatedExerciseBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -641,7 +641,7 @@ struct GaugeWidget: View {
             
             GaugeView(value: isSpeedDisplayed ? convertSpeed(viewModel.exerciseData.speed) : viewModel.exerciseData.currentPower,
                       minValue: 0,
-                      maxValue: isSpeedDisplayed ? (viewModel.isKMUnit ? 40 : 24.8548) : 1000,
+                      maxValue: isSpeedDisplayed ? (viewModel.isKMUnit ? 70 : 45) : 1000,
                       unit: isSpeedDisplayed ? (viewModel.isKMUnit ? "km/h" : "mi/h") : "watts")
             .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
             .padding()
@@ -741,8 +741,33 @@ class LoadingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLoadingScreen()
+        
+        // Register for notifications when the app enters background or foreground
+               NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+               
+               NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+               
+               // Disable the idle timer initially
+               UIApplication.shared.isIdleTimerDisabled = true
+    }
+
+    // Function to handle app entering background
+    @objc func appDidEnterBackground() {
+        // Enable the idle timer when app enters background
+        UIApplication.shared.isIdleTimerDisabled = false
     }
     
+    // Function to handle app entering foreground
+    @objc func appWillEnterForeground() {
+        // Disable the idle timer when app enters foreground
+        UIApplication.shared.isIdleTimerDisabled = true
+    }
+
+    deinit {
+        // Remove observers
+        NotificationCenter.default.removeObserver(self)
+    }
+
     func setupLoadingScreen() {
         let loadingView = UIView(frame: UIScreen.main.bounds)
         loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.7)

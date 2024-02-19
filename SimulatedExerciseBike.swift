@@ -33,7 +33,7 @@ class SimulatedExerciseBike: ExerciseBike {
     override func updateCadenceAndResistance() {
         isLoading = false
         let cadence = Double.random(in: 60...120) // Realistic cadence range
-        let resistance = Double.random(in: 1...10) // Realistic resistance range
+        let resistance = Double.random(in: 1...32) // Realistic resistance range
         
         // Check if new maximum values are reached and update accordingly
         if cadence > exerciseData.maximumCadence {
