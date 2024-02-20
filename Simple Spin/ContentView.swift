@@ -30,8 +30,9 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-//    @ObservedObject var viewModel = EchelonBike()
-    @ObservedObject var viewModel = SimulatedExerciseBike()
+  //      @ObservedObject var viewModel = EchelonBike()
+    //  @ObservedObject var viewModel = SimulatedExerciseBike()
+    @ObservedObject var viewModel = SleepingBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -109,10 +110,30 @@ struct ContentView: View {
                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                     let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
                     
-                    // Sleep app if no activity in last 600 seconds
-                    if timeDifference > 600 && UIScreen.main.brightness != 0 {
-                        UIScreen.main.brightness = 0
+                    
+                    // If Sleep Time is NOT Never, check for when to sleep
+                    if (viewModel.sleepTime != -1) {
+                        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
+                       print("  timeDifference: \(timeDifference) sec")
+                        print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
+                        // Sleep app if no activity in last Sleep Time (min)
+                        if ((timeDifference > Double(viewModel.sleepTime * 60)) && (UIScreen.main.brightness != 0)) {
+                            print("  SLEEPING screen")
+                            UIScreen.main.brightness = 0
+                        }
+                        else {
+                            if (UIScreen.main.brightness == 0) {
+                                print("  WAKING screen")
+                                UIScreen.main.brightness = 1
+                                lastStateChangeTime = Date()
+                            }}
                     }
+                    else {
+                        // If sleep time is NEVER, always be sure brightness on
+                        if (UIScreen.main.brightness == 0) {
+                            UIScreen.main.brightness = 1
+                            lastStateChangeTime = Date()
+                        }}
                 }
                 .overlay {
                     // Gear button
@@ -268,7 +289,7 @@ struct ContentView: View {
 
 struct SettingsView: View {
     @Binding var isVisible: Bool
-
+    
     @State private var selectedDistanceUnit = ConfigurationManager.shared.isKMUnit ? "km" : "mi"
     @State private var selectedSleepTime =      ConfigurationManager.shared.sleepTime
     @State private var errorMessage = ""
@@ -341,11 +362,9 @@ struct SettingsView: View {
                         viewModel.isKMUnit = false
                     }
                     
-                    // Set sleep time
-                    configMgr.sleepTime = selectedSleepTime
-                    
                     // Save sleep time setting
                     configMgr.sleepTime = selectedSleepTime
+                    viewModel.sleepTime = selectedSleepTime
                     
                     configMgr.saveChanges()
                     
@@ -545,14 +564,14 @@ struct NeomorphicTable: View {
     }
     
     func convertDistance(_ distance: Double) -> Double {
-            if self.viewModel.isKMUnit {
-                // Distance is already in KM
-                return distance
-            } else {
-                // Convert KM to MI
-                return distance * 0.621371
-            }
+        if self.viewModel.isKMUnit {
+            // Distance is already in KM
+            return distance
+        } else {
+            // Convert KM to MI
+            return distance * 0.621371
         }
+    }
 }
 
 
@@ -638,12 +657,12 @@ struct GaugeWidget: View {
     
     func convertSpeed(_ speed: Double) -> Double {
         if self.viewModel.isKMUnit {
-        //    print("GaugeWidget: Unit is KM convert")
+            //    print("GaugeWidget: Unit is KM convert")
             
             // Speed is already in KM
             return speed
         } else {
-          //  print("GaugeWidget: Unit is miles convert")
+            //  print("GaugeWidget: Unit is miles convert")
             // Convert KM to MI
             return speed * 0.621371
         }
@@ -706,6 +725,12 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
         } else {
             //        print("LOADING is FALSE")
             (uiViewController as? LoadingViewController)?.removeLoadingScreen()
+            
+            // If screen sleeping, wake it up
+            if (UIScreen.main.brightness == 0) {
+                print("  WAKING screen")
+                UIScreen.main.brightness = 1
+            }
         }
     }
 }
@@ -730,14 +755,14 @@ class LoadingViewController: UIViewController {
         setupLoadingScreen()
         
         // Register for notifications when the app enters background or foreground
-               NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-               
-               NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-               
-               // Disable the idle timer initially
-               UIApplication.shared.isIdleTimerDisabled = true
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        
+        // Disable the idle timer initially
+        UIApplication.shared.isIdleTimerDisabled = true
     }
-
+    
     // Function to handle app entering background
     @objc func appDidEnterBackground() {
         // Enable the idle timer when app enters background
@@ -749,12 +774,12 @@ class LoadingViewController: UIViewController {
         // Disable the idle timer when app enters foreground
         UIApplication.shared.isIdleTimerDisabled = true
     }
-
+    
     deinit {
         // Remove observers
         NotificationCenter.default.removeObserver(self)
     }
-
+    
     func setupLoadingScreen() {
         let loadingView = UIView(frame: UIScreen.main.bounds)
         loadingView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
@@ -777,7 +802,6 @@ class LoadingViewController: UIViewController {
         
         loadingView.addSubview(bikeMessageLabel)
         
-        
         view.addSubview(loadingView)
     }
     
@@ -788,8 +812,6 @@ class LoadingViewController: UIViewController {
             })
         }
     }
-    
-    
     
     func showLoadingScreen() {
         DispatchQueue.main.async {

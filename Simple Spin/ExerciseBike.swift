@@ -54,7 +54,7 @@ class ExerciseBike: ObservableObject {
     
     @Published var isWattUnit: Bool
     @Published var isKMUnit: Bool
-    
+    @Published var sleepTime: Int
     
     init() {
        print("Init ExerciseBike")
@@ -66,9 +66,11 @@ class ExerciseBike: ObservableObject {
         // Accessing configuration settings
         self.isWattUnit = configMgr.isWattUnit
         self.isKMUnit = configMgr.isKMUnit
+        self.sleepTime = configMgr.sleepTime
         
         print("isWattUnit:", self.isWattUnit)
         print("isKMUnit:", self.isKMUnit)
+        print("sleepTime:", self.sleepTime)
     }
     
     // Separated connectDevice from init because I cannot send self ExerciseBike to BluetoothManager until all self initialized; this is circular
