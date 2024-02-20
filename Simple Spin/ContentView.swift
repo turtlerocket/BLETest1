@@ -113,9 +113,9 @@ struct ContentView: View {
                     
                     // If Sleep Time is NOT Never, check for when to sleep
                     if (viewModel.sleepTime != -1) {
-                        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
-                        print("  timeDifference: \(timeDifference) sec")
-                        print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
+                //        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
+                  //      print("  timeDifference: \(timeDifference) sec")
+                    //    print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
                         
                         // If the bike is in action in last 5 seconds, automatically wake up the app
                         

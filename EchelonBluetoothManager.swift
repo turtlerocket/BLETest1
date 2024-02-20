@@ -54,7 +54,7 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
             exercisePeripheral?.delegate = self
             centralManager.stopScan()
             centralManager.connect(exercisePeripheral!)
-            print("Excehlon bike found, connecting...")
+            print("Echelon bike found, connecting...")
         viewModel.bikeMessage = "Echelon bike found, connecting..."
      //   }
     }
@@ -62,6 +62,20 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected to exercise bike, discovering services")
         peripheral.discoverServices([serviceUUID])
+    }
+    
+    
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+            // Device disconnected, handle the disconnection event
+            if let error = error {
+                print("Peripheral disconnected with error: \(error.localizedDescription)")
+            } else {
+                print("Peripheral disconnected.")
+            }
+        
+            // If bike disconnected, start searching for device
+            print("ERROR in peripheral connection, start bike discovery")
+            startScan()
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
@@ -124,5 +138,6 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
             }
         }
     }
+
 }
 
