@@ -1,4 +1,4 @@
-// Works - captures cadence, resistance - calculates power.
+// Manages all bluetooth connections from Echelon device.  Sends broadcast and receives resistance and cadence.
 import CoreBluetooth
 
 
@@ -30,7 +30,7 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
         viewModel.isLoading = true
         centralManager.scanForPeripherals(withServices: [bikeUUID], options: nil)
    //     centralManager.scanForPeripherals(withServices: nil, options: nil)
-        print("Scanning for exercise bike...")
+        debugPrint("Scanning for exercise bike...")
         viewModel.bikeMessage = "Scanning for exercise bike"
     }
     
@@ -38,7 +38,7 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
         if central.state == .poweredOn {
             startScan()
         } else {
-            print("Bluetooth not available")
+            debugPrint("Bluetooth not available")
             viewModel.bikeMessage = "Bluetooth not available"
             
             
@@ -48,35 +48,70 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        print("Initializing bike: \(peripheral)")
+        debugPrint("Initializing bike: \(peripheral)")
      //   if peripheral.identifier.uuidString == "D70DCA5C-1C30-B7EC-8CAB-69D5A540C259" {
             exercisePeripheral = peripheral
             exercisePeripheral?.delegate = self
             centralManager.stopScan()
             centralManager.connect(exercisePeripheral!)
-            print("Echelon bike found, connecting...")
+            debugPrint("Echelon bike found, connecting...")
         viewModel.bikeMessage = "Echelon bike found, connecting..."
      //   }
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("Connected to exercise bike, discovering services")
-        peripheral.discoverServices([serviceUUID])
+       
+        // Device connected, you can start interacting with the peripheral
+        if peripheral.state == .connected {
+            // Perform operations on the peripheral
+            debugPrint("Connected to exercise bike, discovering services")
+            peripheral.discoverServices([serviceUUID])
+        }
+        else {
+            debugPrint("Peripheral is not in a connected state.")
+        }
     }
     
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
             // Device disconnected, handle the disconnection event
             if let error = error {
-                print("Peripheral disconnected with error: \(error.localizedDescription)")
+                debugPrint("Peripheral DISCONNECTED with error: \(error.localizedDescription)")
+                
+                // Log more detailed error information if available
+                        if let cbError = error as? CBError {
+                            debugPrint("CoreBluetooth Error Code: \(cbError.errorCode)")
+                            debugPrint("CoreBluetooth Error Domain: \(CBError.errorDomain)")
+                            debugPrint("CoreBluetooth Error Description: \(cbError.localizedDescription)")
+                        }
             } else {
-                print("Peripheral disconnected.")
+                debugPrint("Peripheral DISCONNECTED.")
             }
         
             // If bike disconnected, start searching for device
-            print("ERROR in peripheral connection, start bike discovery")
+            debugPrint("ERROR in peripheral CONNECTION, start bike discovery")
             startScan()
     }
+    
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        if let error = error {
+            debugPrint("Peripheral FAIL TO CONNECT with error: \(error.localizedDescription)")
+            // Log more detailed error information if available
+                    if let cbError = error as? CBError {
+                        debugPrint("CoreBluetooth Error Code: \(cbError.errorCode)")
+                        debugPrint("CoreBluetooth Error Domain: \(CBError.errorDomain)")
+                        debugPrint("CoreBluetooth Error Description: \(cbError.localizedDescription)")
+                    }
+        } else {
+            debugPrint("Peripheral  FAIL TO CONNECT .")
+        }
+    
+        // If bike disconnected, start searching for device
+        debugPrint("ERROR in peripheral  FAIL TO CONNECT , start bike discovery")
+        startScan()
+    }
+    
+    
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = peripheral.services {
@@ -93,12 +128,12 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
                 debugPrint("  Characteristics: \(characteristic)")
                 if characteristic.uuid == notifyCharacteristicUUID1 || characteristic.uuid == notifyCharacteristicUUID2 {
                     peripheral.setNotifyValue(true, for: characteristic)
-                    print("NOTIFYING characteristics set: \(characteristic)")
+                    debugPrint("NOTIFYING characteristics set: \(characteristic)")
                 }
                 if characteristic.uuid == writeCharacteristicUUID {
                     let dataToSend: [UInt8] = [0xF0, 0xB0, 0x01, 0x01, 0xA2]
                     let data = Data(bytes: dataToSend, count: dataToSend.count)
-                    print("ENABLE Broadcast for Exercise Bike \(characteristic)) \(data)")
+                    debugPrint("ENABLE Broadcast for Exercise Bike \(characteristic)) \(data)")
 
                     peripheral.writeValue(data, for: characteristic, type: .withResponse)
                     viewModel.bikeMessage = ""
@@ -111,29 +146,29 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
         if let data = characteristic.value {
             let notificationType = data[1]
             
-  //          print("Received notification from characteristic \(characteristic): \(data) : \(notificationType)")
+  //          debugPrint("Received notification from characteristic \(characteristic): \(data) : \(notificationType)")
             
             if notificationType == 0xD1 {  // Cadence notification
- //               print("CADENCE message: \(characteristic): \(data) : \(notificationType)")
+ //               debugPrint("CADENCE message: \(characteristic): \(data) : \(notificationType)")
                 if data.count >= 11 {
                     viewModel.isLoading = false
                     viewModel.exerciseData.cadence = Double((Int16(data[9]) << 8) + Int16(data[10]))
                     viewModel.exerciseData.currentPower = viewModel.calculatePower(cadence: viewModel.exerciseData.cadence, resistance: Double(viewModel.exerciseData.resistance))
-  //                  print("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
+  //                  debugPrint("  CADENCE: \( self.exerciseData.cadence)  resistance \(self.exerciseData.resistance)  power: \(self.exerciseData.currentPower)")
                     viewModel.updateCadenceAndResistance()
                 } else {
-                    print("Error: Invalid data length for Cadence message")
+                    debugPrint("Error: Invalid data length for Cadence message")
                 }
             } else if notificationType == 0xD2 {  // Resistance notification
-                print("Resistance message: \(characteristic): \(data) : \(notificationType)")
+                debugPrint("Resistance message: \(characteristic): \(data) : \(notificationType)")
                 if data.count >= 4 {
                     viewModel.isLoading = false
                     viewModel.exerciseData.resistance = Double(data[3])
                     viewModel.exerciseData.currentPower = viewModel.calculatePower(cadence: viewModel.exerciseData.cadence, resistance: viewModel.exerciseData.resistance)
-        //            print("  RESISTANCE: \(self.exerciseData.resistance)  cadence: \(self.exerciseData.cadence) power: \(self.exerciseData.currentPower)")
+        //            debugPrint("  RESISTANCE: \(self.exerciseData.resistance)  cadence: \(self.exerciseData.cadence) power: \(self.exerciseData.currentPower)")
                     viewModel.updateCadenceAndResistance()
                 } else {
-                    print("Error: Invalid data length for Resistance message")
+                    debugPrint("Error: Invalid data length for Resistance message")
                 }
             }
         }
