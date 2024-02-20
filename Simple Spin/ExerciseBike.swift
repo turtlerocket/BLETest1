@@ -55,6 +55,8 @@ class ExerciseBike: ObservableObject {
     @Published var isWattUnit: Bool
     @Published var isKMUnit: Bool
     @Published var sleepTime: Int
+  
+    @Published var lastActionTime: Date = LowMemoryDateProvider.current
     
     init() {
        print("Init ExerciseBike")
@@ -108,6 +110,13 @@ class ExerciseBike: ObservableObject {
         if  self.exerciseData.speed > exerciseData.maximumSpeed {
             exerciseData.maximumSpeed =  self.exerciseData.speed
         }
+        
+        // Get the time of the most recent activity
+ //       LowMemoryDateProvider.updateCurrentDate()
+   //     lastActionTime = LowMemoryDateProvider.current
+
+     //   print("Updating Cadence and Resistance: \(lastActionTime)")
+
     }
     
     // Start the timer
@@ -166,7 +175,8 @@ class ExerciseBike: ObservableObject {
     
     // Calculate speed from cadence and resistance
    public func calculateSpeed(cadence: Double, resistance: Double) -> Double {
-        // Implement your speed calculation logic here
+   
+       // Implement your speed calculation logic here
         // Example calculation: speed = (cadence * resistance) / 10
         //   return (cadence * resistance)/10
  //       return ((cadence - 35) * 0.4) * ((resistance/32) * 9) + 0.4
@@ -175,5 +185,14 @@ class ExerciseBike: ObservableObject {
         return pow(10 * self.exerciseData.currentPower, 0.4)
     }
 
+}
+
+struct LowMemoryDateProvider {
+    static var current: Date = Date()
+    
+    static func updateCurrentDate() {
+        // Update the current date only when necessary
+        current = Date()
+    }
 }
 

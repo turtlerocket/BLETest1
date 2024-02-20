@@ -30,9 +30,9 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-  //      @ObservedObject var viewModel = EchelonBike()
+    @ObservedObject var viewModel = EchelonBike()
     //  @ObservedObject var viewModel = SimulatedExerciseBike()
-    @ObservedObject var viewModel = SleepingBike()
+    //  @ObservedObject var viewModel = SleepingBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -108,22 +108,25 @@ struct ContentView: View {
                 }
                 .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                    let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
-                    
+                    let currentTime = Date()
+                    let timeDifference = currentTime.timeIntervalSince(lastStateChangeTime)
                     
                     // If Sleep Time is NOT Never, check for when to sleep
                     if (viewModel.sleepTime != -1) {
                         print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
-                       print("  timeDifference: \(timeDifference) sec")
+                        print("  timeDifference: \(timeDifference) sec")
                         print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
+                        
+                        // If the bike is in action in last 5 seconds, automatically wake up the app
+                        
                         // Sleep app if no activity in last Sleep Time (min)
                         if ((timeDifference > Double(viewModel.sleepTime * 60)) && (UIScreen.main.brightness != 0)) {
-                            print("  SLEEPING screen")
+                            print("  SLEEPING screen from sleeping timeout")
                             UIScreen.main.brightness = 0
                         }
-                        else {
+                        else if (timeDifference < Double(viewModel.sleepTime * 60)) {
                             if (UIScreen.main.brightness == 0) {
-                                print("  WAKING screen")
+                                print("  WAKING screen from sleeping timeout")
                                 UIScreen.main.brightness = 1
                                 lastStateChangeTime = Date()
                             }}
@@ -131,6 +134,7 @@ struct ContentView: View {
                     else {
                         // If sleep time is NEVER, always be sure brightness on
                         if (UIScreen.main.brightness == 0) {
+                            print("  ALWAYS Awake - WAKING SCREEN")
                             UIScreen.main.brightness = 1
                             lastStateChangeTime = Date()
                         }}
@@ -197,14 +201,6 @@ struct ContentView: View {
                     
                 }
                 .background(Color.black.edgesIgnoringSafeArea(.all)) // Set background color to black
-                .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                    let timeDifference = Date().timeIntervalSince(lastStateChangeTime)
-                    
-                    // Sleep app if no activity in last 600 seconds
-                    if timeDifference > 600 && UIScreen.main.brightness != 0 {
-                        UIScreen.main.brightness = 0
-                    }
-                }
                 .overlay {
                     // Gear button
                     SettingButton(isSettingsVisible: $isSettingsVisible)
@@ -220,8 +216,20 @@ struct ContentView: View {
             print("  onChange HorizontalSizeClass:\(horizontalSizeClass)")
             updateWidthSize()
         }
+        .onChange(of: viewModel.exerciseData.cadence) {
+            if (UIScreen.main.brightness == 0) {
+                print("  WAKING screen from cadence change!!")
+                UIScreen.main.brightness = 1
+            }
+            
+            // Always update the last StateChangeTime if there is activity on the bike
+            lastStateChangeTime = Date()
+        }
         .onTapGesture {
+            print("Screen tapped with UIScreen.main.brightness: \(UIScreen.main.brightness)")
             if UIScreen.main.brightness == 0 {
+                
+                print("  TAP - WAKING up screen")
                 UIScreen.main.brightness = 1
                 lastStateChangeTime = Date()
             }
@@ -296,6 +304,8 @@ struct SettingsView: View {
     
     @ObservedObject var viewModel: ExerciseBike
     
+    let metricSize: Double = 16 // Define your metric size here
+    
     var body: some View {
         VStack {
             Text("Settings")
@@ -308,16 +318,21 @@ struct SettingsView: View {
             Form {
                 Section {
                     HStack {
-                        Spacer()
+                        
                         Text("Unit")
                             .frame(width: 50, alignment: .trailing)
+                            .font(.system(size: CGFloat(metricSize) * 1.5))
+                        
+                        Spacer()
                         Picker("", selection: $selectedDistanceUnit) {
                             Text("Kilometer").tag("km")
                             Text("Mile").tag("mi")
                         }
                         .pickerStyle(SegmentedPickerStyle())
+                        .font(.system(size: CGFloat(metricSize) * 1.5))
                         Spacer()
                     }
+                    .font(.system(size: CGFloat(metricSize) * 1.5))
                 }
                 
                 Section(header: Text("")) {
@@ -332,6 +347,7 @@ struct SettingsView: View {
                         Text("Never").tag(-1)
                     }
                     .pickerStyle(MenuPickerStyle())
+                    .font(.system(size: CGFloat(metricSize) * 1.5))
                 }
             }
             .padding()
@@ -391,6 +407,7 @@ struct SettingsView: View {
             .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
     }
 }
+
 
 
 struct SettingButton : View {
@@ -728,7 +745,7 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
             
             // If screen sleeping, wake it up
             if (UIScreen.main.brightness == 0) {
-                print("  WAKING screen")
+                print("  WAKING Controller screen")
                 UIScreen.main.brightness = 1
             }
         }
