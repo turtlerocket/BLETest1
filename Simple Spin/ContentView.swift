@@ -2,6 +2,8 @@ import SwiftUI
 
 import UIKit
 
+import Combine
+
 // Global variablees and enums for UI Gauge, Header, and Bike Metrics
 
 enum GaugeSize {
@@ -30,8 +32,8 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    @ObservedObject var viewModel = EchelonBike()
-    //  @ObservedObject var viewModel = SimulatedExerciseBike()
+       @ObservedObject var viewModel = EchelonBike()
+  //  @ObservedObject var viewModel = SimulatedExerciseBike()
     //  @ObservedObject var viewModel = SleepingBike()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
@@ -40,10 +42,13 @@ struct ContentView: View {
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
-    @State private var isIPhoneLandscape: Bool = false
+//    @State private var isIPhoneLandscape: Bool = false
+//    @State private var isIPad = true
     
     @State private var isSettingsVisible = false
-    
+
+    @StateObject var orientationController = OrientationDetectionController()
+   
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     
@@ -54,7 +59,7 @@ struct ContentView: View {
     var body: some View {
         
         GeometryReader {    geometry in
-            if (!isIPhoneLandscape) {
+            if (!orientationController.isIPhoneLandscape) {
                 VStack {
                     GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: viewModel)
                     
@@ -113,9 +118,9 @@ struct ContentView: View {
                     
                     // If Sleep Time is NOT Never, check for when to sleep
                     if (viewModel.sleepTime != -1) {
-                //        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
-                  //      print("  timeDifference: \(timeDifference) sec")
-                    //    print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
+                        //        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
+                        //      print("  timeDifference: \(timeDifference) sec")
+                        //    print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
                         
                         // If the bike is in action in last 5 seconds, automatically wake up the app
                         
@@ -209,10 +214,10 @@ struct ContentView: View {
             
         }
         .onAppear {
-            print("  onAppear")
-            updateWidthSize()
+          //  print("  onAppear")
+            //        updateWidthSize()
         }
-        .onChange(of: horizontalSizeClass) { _ in
+        .onChange(of: horizontalSizeClass) {
             print("  onChange HorizontalSizeClass:\(horizontalSizeClass)")
             updateWidthSize()
         }
@@ -255,44 +260,56 @@ struct ContentView: View {
     
     
     private func updateWidthSize() {
-        if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+        
+        // If an IPhone, check whether portrait or landscape
+        if (!orientationController.isIPad) {
+   //         if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+            
+            if (!orientationController.isIPhoneLandscape) {
             // iPhone portrait layout
-            print("DISPLAY: iPhone portrait")
-            gaugeSize = GaugeSize.small
-            headerSize = HeaderSize.small
-            metricSize = MetricSize.small
+                print("DISPLAY: iPhone portrait")
+                gaugeSize = GaugeSize.small
+                headerSize = HeaderSize.small
+                metricSize = MetricSize.small
+                
+                //   } else if horizontalSizeClass == .compact && verticalSizeClass == .compact {
+                //     // iPhone landscape layout
+            } else {
+                print("DISPLAY: iPhone landscape")
+                gaugeSize = GaugeSize.small
+                headerSize = HeaderSize.small
+                metricSize = MetricSize.small
+            }
             
-            isIPhoneLandscape = false
+        } 
+            else {
+                //else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
+                // iPad portrait and landscape layout
+                print("DISPLAY: iPad landscape or portrait")
+                gaugeSize = GaugeSize.large
+                headerSize = HeaderSize.large
+                metricSize = MetricSize.large
+            }
+    
             
-        } else if horizontalSizeClass == .compact && verticalSizeClass == .compact {
-            // iPhone landscape layout
-            print("DISPLAY: iPhone landscape")
-            gaugeSize = GaugeSize.small
-            headerSize = HeaderSize.small
-            metricSize = MetricSize.small
-            isIPhoneLandscape = true
-            
-            
-        } else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
-            // iPad portrait and landscape layout
-            print("DISPLAY: iPad landscape or portrait")
-            gaugeSize = GaugeSize.large
-            headerSize = HeaderSize.large
-            metricSize = MetricSize.large
-            isIPhoneLandscape = false
-        } else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
+        } 
+            /*
+            else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
             // iPhone SOMETHING
             print("DISPLAY: iPhone something")
             gaugeSize = GaugeSize.medium
             headerSize = HeaderSize.medium
             metricSize = MetricSize.medium
-            isIPhoneLandscape = false
+            
+            isIPad = false
+            
         } else {
             // iPhone SOMETHING
             print("DISPLAY: Unknown")
-            isIPhoneLandscape = false
         }
-    }
+             */
+    
+  
 }
 
 struct SettingsView: View {
@@ -723,11 +740,52 @@ struct GaugeView: View {
     }
 }
 
+class OrientationDetectionController: ObservableObject {
+    var isIPad: Bool = false
+    var isIPhoneLandscape: Bool = false
+    
+    private var cancellables: Set<AnyCancellable> = []
+        
+        init() {
+            setupOrientationDetection()
+        }
+    
+    private func setupOrientationDetection() {
+        // Check device type
+        isIPad = UIDevice.current.userInterfaceIdiom == .pad
+        
+        // Initial orientation check
+        updateOrientation()
+        
+        // Add observer for orientation changes
+               NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+                   .sink { _ in
+                       self.updateOrientation()
+                   }
+                   .store(in: &cancellables)
+    }
+    
+    private func updateOrientation() {
+           if isIPad {
+      //         print("iPad MODE")
+               isIPhoneLandscape = false
+           } else {
+               if UIDevice.current.orientation.isLandscape {
+           //        print("iPhone LANDSCAPE MODE")
+                   isIPhoneLandscape = true
+               } else {
+          //         print("iPhone PORTRAIT MODE")
+                   isIPhoneLandscape = false
+               }
+           }
+       }
+}
 
 struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
     @Binding var isLoading: Bool
     @Binding var bikeMessage: String
-    
+
+  
     func makeUIViewController(context: Context) -> UIViewController {
         let loadingVC = LoadingViewController(bikeMessage: $bikeMessage)
         
@@ -756,10 +814,13 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
 
 class LoadingViewController: UIViewController {
     var bikeMessage: Binding<String>
+
     
     // Initializer that accepts a Binding<String>
     init(bikeMessage: Binding<String>) {
         self.bikeMessage = bikeMessage
+
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -778,6 +839,13 @@ class LoadingViewController: UIViewController {
         
         // Disable the idle timer initially
         UIApplication.shared.isIdleTimerDisabled = true
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        
+ 
     }
     
     // Function to handle app entering background
