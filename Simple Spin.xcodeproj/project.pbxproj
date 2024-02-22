@@ -12,9 +12,11 @@
 		607DCBFD2B845536001D8637 /* SleepingBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607DCBFC2B845536001D8637 /* SleepingBike.swift */; };
 		60941B182B86CB71008CBB28 /* DemoExpirationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */; };
 		60941B1A2B86CBA5008CBB28 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B192B86CBA5008CBB28 /* KeychainService.swift */; };
+		60941B1C2B86FC5B008CBB28 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */; };
 		60B72D792B7EDAC90020EAF6 /* EchelonBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */; };
 		60B72D832B81A2160020EAF6 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */; };
 		60B72D892B81C9260020EAF6 /* EchelonBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */; };
+		60D1C8C02B87D2110091C0B3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1C8BF2B87D2110091C0B3 /* SettingsView.swift */; };
 		60FC63E22B781CBF00A43B12 /* SimpleSpinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E12B781CBF00A43B12 /* SimpleSpinApp.swift */; };
 		60FC63E42B781CBF00A43B12 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FC63E32B781CBF00A43B12 /* ContentView.swift */; };
 		60FC63E62B781CC200A43B12 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60FC63E52B781CC200A43B12 /* Assets.xcassets */; };
@@ -47,9 +49,11 @@
 		607DCBFC2B845536001D8637 /* SleepingBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepingBike.swift; sourceTree = "<group>"; };
 		60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoExpirationManager.swift; sourceTree = "<group>"; };
 		60941B192B86CBA5008CBB28 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBike.swift; sourceTree = "<group>"; };
 		60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBluetoothManager.swift; sourceTree = "<group>"; };
+		60D1C8BF2B87D2110091C0B3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		60FC63DE2B781CBF00A43B12 /* Simple Spin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Simple Spin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FC63E12B781CBF00A43B12 /* SimpleSpinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSpinApp.swift; sourceTree = "<group>"; };
 		60FC63E32B781CBF00A43B12 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,6 +94,8 @@
 		60FC63D52B781CBF00A43B12 = {
 			isa = PBXGroup;
 			children = (
+				60D1C8BF2B87D2110091C0B3 /* SettingsView.swift */,
+				60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */,
 				60941B192B86CBA5008CBB28 /* KeychainService.swift */,
 				60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */,
 				607DCBFC2B845536001D8637 /* SleepingBike.swift */,
@@ -282,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				60448CD62B783E8100F5C853 /* ExerciseBike.swift in Sources */,
+				60941B1C2B86FC5B008CBB28 /* SubscriptionView.swift in Sources */,
 				603A95432B7E7D2000CD7C31 /* SimulatedExerciseBike.swift in Sources */,
 				60B72D832B81A2160020EAF6 /* ConfigurationManager.swift in Sources */,
 				60941B1A2B86CBA5008CBB28 /* KeychainService.swift in Sources */,
@@ -289,6 +296,7 @@
 				60B72D792B7EDAC90020EAF6 /* EchelonBike.swift in Sources */,
 				60FC63E22B781CBF00A43B12 /* SimpleSpinApp.swift in Sources */,
 				60B72D892B81C9260020EAF6 /* EchelonBluetoothManager.swift in Sources */,
+				60D1C8C02B87D2110091C0B3 /* SettingsView.swift in Sources */,
 				607DCBFD2B845536001D8637 /* SleepingBike.swift in Sources */,
 				60941B182B86CB71008CBB28 /* DemoExpirationManager.swift in Sources */,
 			);
@@ -470,7 +478,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = svdisrupt.BLETest1;
+				PRODUCT_BUNDLE_IDENTIFIER = svdisrupt.SimpleSpin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -503,7 +511,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = svdisrupt.BLETest1;
+				PRODUCT_BUNDLE_IDENTIFIER = svdisrupt.SimpleSpin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

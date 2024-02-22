@@ -1,14 +1,12 @@
 import Foundation
 
-
-import SwiftUI
-
-import SwiftUI
+import Foundation
 
 class DemoExpirationViewModel: ObservableObject {
     @Published var message: String = ""
     @Published var isSubscribed: Bool = false
-    @Published var timeUntilExpiration: TimeInterval = 0
+    @Published var demoExpirationDate: String = ""
+    @Published var isDemoExpired: Bool = false
     
     private var timer: Timer?
     
@@ -23,8 +21,10 @@ class DemoExpirationViewModel: ObservableObject {
     }
     
     func updateMessage() {
-        let message = DemoExpirationManager.shared.getMessage()
+        let (message, expirationDate, isExpired) = DemoExpirationManager.shared.getMessageAndExpirationDate()
         self.message = message
+        self.demoExpirationDate = expirationDate
+        self.isDemoExpired = isExpired
     }
     
     func checkSubscriptionStatus() {
@@ -34,20 +34,11 @@ class DemoExpirationViewModel: ObservableObject {
     
     func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let installationDate = DemoExpirationManager.shared.installationDate else {
-                return
-            }
-            
-            let currentDate = Date()
-            let expirationDate = Calendar.current.date(byAdding: .day, value: 3, to: installationDate) ?? currentDate
-            
-            let timeUntilExpiration = expirationDate.timeIntervalSince(currentDate)
-            self?.timeUntilExpiration = max(timeUntilExpiration, 0)
-            
-            print("Time until demo expired: \(timeUntilExpiration)")
+            self?.updateMessage()
         }
     }
 }
+
 
 class DemoExpirationManager {
     static let shared = DemoExpirationManager()
@@ -57,77 +48,71 @@ class DemoExpirationManager {
     var installationDate: Date? {
         get {
             if let loadedDate = KeychainService.loadDate(forKey: installationDateKey) {
-                // Called every second until demo expired
-         //       print("Installation date loaded: \(loadedDate)")
                 return loadedDate
             } else {
-                print("No installation date found. Setting installation date.")
                 let currentDate = Date()
                 KeychainService.saveDate(value: currentDate, forKey: installationDateKey)
-                print("Installation date set to current date: \(currentDate)")
                 return currentDate
             }
         }
         set {
             if let newValue = newValue {
-                print("Installation date set: \(newValue)")
                 KeychainService.saveDate(value: newValue, forKey: installationDateKey)
             } else {
-                print("Installation date deleted.")
                 KeychainService.deleteValue(forKey: installationDateKey)
             }
         }
     }
     
-    // Set the installation date if needed
     func setInstallationDateIfNeeded() {
         _ = installationDate
     }
     
-    // Check if the demo period is expired
     func isDemoPeriodExpired() -> Bool {
         guard let installationDate = installationDate else {
-            print("Installation date is nil.")
             return true
         }
         
         let currentDate = Date()
         let calendar = Calendar.current
-        let expirationDate = calendar.date(byAdding: .day, value: 30, to: installationDate) // Assuming a 30-day trial
+        let expirationDate = calendar.date(byAdding: .day, value: 3, to: installationDate) // Adjusted to 3 days for demo
         
         if let expirationDate = expirationDate {
-            print("Expiration date calculated: \(expirationDate)")
             return currentDate >= expirationDate
         } else {
-            print("Failed to calculate expiration date.")
             return true
         }
     }
     
-    // Check if there is a valid subscription
     func hasValidSubscription() -> Bool {
-        // Implement logic to check subscription validity from Apple service
-        // You might need to use StoreKit framework or interact with your server to validate subscriptions
-        // For the sake of this example, let's return false
-        let isValidSubscription = false
-        if isValidSubscription {
-            print("User has a valid subscription.")
-        } else {
-            print("User does not have a valid subscription.")
-        }
-        return isValidSubscription
+        // Your subscription validation logic
+        return false
     }
     
-    // Get the appropriate message based on subscription status
-    func getMessage() -> String {
+    func getMessageAndExpirationDate() -> (String, String, Bool) {
+        let expirationDate = demoExpirationDate()
+        let isExpired = isDemoPeriodExpired()
+        
         if hasValidSubscription() {
-            return "Your subscription is active. Enjoy the full version!"
+            return ("Your subscription is active. Enjoy the full version!", expirationDate, isExpired)
         } else {
-            if isDemoPeriodExpired() {
-                return "Your demo period has expired. Please subscribe to unlock full features."
+            if isExpired {
+                return ("Your demo period has expired on \(expirationDate). Please subscribe to unlock full features.", expirationDate, isExpired)
             } else {
-                return "You are currently in the demo period. Enjoy using the app!"
+                return ("You are currently in the demo period until \(expirationDate). Enjoy using the app!", expirationDate, isExpired)
             }
         }
+    }
+    
+    func demoExpirationDate() -> String {
+        guard let installationDate = installationDate else {
+            return "N/A"
+        }
+        
+        let expirationDate = Calendar.current.date(byAdding: .day, value: 3, to: installationDate) ?? installationDate
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy HH:mm"
+        
+        return dateFormatter.string(from: expirationDate)
     }
 }
