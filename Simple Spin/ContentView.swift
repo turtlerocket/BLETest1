@@ -60,7 +60,10 @@ struct ContentView: View {
     init() {
         viewModel.connectDevice()
         
-        
+        // Simulate ALREADY subscribed - comment out for production depoyment
+        // Note that isSubscribed should be set in production by the
+        // DemoExpirationManager.shared.hasValidSubscription
+        demoModel.isSubscribed = true
     }
     
     var body: some View {

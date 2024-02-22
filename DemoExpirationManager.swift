@@ -1,7 +1,5 @@
 import Foundation
 
-import Foundation
-
 class DemoExpirationViewModel: ObservableObject {
     @Published var message: String = ""
     @Published var isSubscribed: Bool = false
@@ -13,7 +11,7 @@ class DemoExpirationViewModel: ObservableObject {
     init() {
         updateMessage()
         checkSubscriptionStatus()
-        startTimer()
+        startOrStopTimer()
     }
     
     deinit {
@@ -32,9 +30,13 @@ class DemoExpirationViewModel: ObservableObject {
         self.isSubscribed = isSubscribed
     }
     
-    func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.updateMessage()
+    func startOrStopTimer() {
+        if isSubscribed {
+            timer?.invalidate()
+        } else {
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+                self?.updateMessage()
+            }
         }
     }
 }
