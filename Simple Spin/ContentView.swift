@@ -32,9 +32,11 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-       @ObservedObject var viewModel = EchelonBike()
-  //  @ObservedObject var viewModel = SimulatedExerciseBike()
+    //       @ObservedObject var viewModel = EchelonBike()
+    @ObservedObject var viewModel = SimulatedExerciseBike()
     //  @ObservedObject var viewModel = SleepingBike()
+    
+    @ObservedObject var demoModel = DemoExpirationViewModel()
     
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -42,18 +44,21 @@ struct ContentView: View {
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
-//    @State private var isIPhoneLandscape: Bool = false
-//    @State private var isIPad = true
+    //    @State private var isIPhoneLandscape: Bool = false
+    //    @State private var isIPad = true
     
     @State private var isSettingsVisible = false
-
+    
     @StateObject var orientationController = OrientationDetectionController()
-   
+    
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     
+    
     init() {
         viewModel.connectDevice()
+        
+    
     }
     
     var body: some View {
@@ -67,6 +72,21 @@ struct ContentView: View {
                     
                     SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                         .padding()
+                    
+                    Text(demoModel.message)
+                                    .padding()
+                                
+                                if !demoModel.isSubscribed {
+                                    Button(action: {
+                                        // Handle subscription action
+                                    }) {
+                                        Text("Subscribe Now")
+                                    }
+                                    .padding()
+                                    
+                                    Text("Time until demo expires: \(demoModel.timeUntilExpiration.formattedTimeString())")
+                                        .padding()
+                                }
                     
                     Spacer()
                     
@@ -214,7 +234,7 @@ struct ContentView: View {
             
         }
         .onAppear {
-          //  print("  onAppear")
+            //  print("  onAppear")
             //        updateWidthSize()
         }
         .onChange(of: horizontalSizeClass) {
@@ -257,16 +277,16 @@ struct ContentView: View {
     }
     
     
-    
+  
     
     private func updateWidthSize() {
         
         // If an IPhone, check whether portrait or landscape
         if (!orientationController.isIPad) {
-   //         if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+            //         if horizontalSizeClass == .compact && verticalSizeClass == .regular {
             
             if (!orientationController.isIPhoneLandscape) {
-            // iPhone portrait layout
+                // iPhone portrait layout
                 print("DISPLAY: iPhone portrait")
                 gaugeSize = GaugeSize.small
                 headerSize = HeaderSize.small
@@ -281,36 +301,47 @@ struct ContentView: View {
                 metricSize = MetricSize.small
             }
             
-        } 
-            else {
-                //else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
-                // iPad portrait and landscape layout
-                print("DISPLAY: iPad landscape or portrait")
-                gaugeSize = GaugeSize.large
-                headerSize = HeaderSize.large
-                metricSize = MetricSize.large
-            }
-    
-            
-        } 
-            /*
-            else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
-            // iPhone SOMETHING
-            print("DISPLAY: iPhone something")
-            gaugeSize = GaugeSize.medium
-            headerSize = HeaderSize.medium
-            metricSize = MetricSize.medium
-            
-            isIPad = false
-            
-        } else {
-            // iPhone SOMETHING
-            print("DISPLAY: Unknown")
         }
-             */
+        else {
+            //else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
+            // iPad portrait and landscape layout
+            print("DISPLAY: iPad landscape or portrait")
+            gaugeSize = GaugeSize.large
+            headerSize = HeaderSize.large
+            metricSize = MetricSize.large
+        }
+        
+        
+    }
+    /*
+     else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
+     // iPhone SOMETHING
+     print("DISPLAY: iPhone something")
+     gaugeSize = GaugeSize.medium
+     headerSize = HeaderSize.medium
+     metricSize = MetricSize.medium
+     
+     isIPad = false
+     
+     } else {
+     // iPhone SOMETHING
+     print("DISPLAY: Unknown")
+     }
+     */
     
-  
+    
 }
+
+extension TimeInterval {
+    func formattedTimeString() -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        formatter.unitsStyle = .full
+        
+        return formatter.string(from: self) ?? ""
+    }
+}
+
 
 struct SettingsView: View {
     @Binding var isVisible: Bool
@@ -745,10 +776,10 @@ class OrientationDetectionController: ObservableObject {
     var isIPhoneLandscape: Bool = false
     
     private var cancellables: Set<AnyCancellable> = []
-        
-        init() {
-            setupOrientationDetection()
-        }
+    
+    init() {
+        setupOrientationDetection()
+    }
     
     private func setupOrientationDetection() {
         // Check device type
@@ -758,34 +789,34 @@ class OrientationDetectionController: ObservableObject {
         updateOrientation()
         
         // Add observer for orientation changes
-               NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-                   .sink { _ in
-                       self.updateOrientation()
-                   }
-                   .store(in: &cancellables)
+        NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+            .sink { _ in
+                self.updateOrientation()
+            }
+            .store(in: &cancellables)
     }
     
     private func updateOrientation() {
-           if isIPad {
-      //         print("iPad MODE")
-               isIPhoneLandscape = false
-           } else {
-               if UIDevice.current.orientation.isLandscape {
-           //        print("iPhone LANDSCAPE MODE")
-                   isIPhoneLandscape = true
-               } else {
-          //         print("iPhone PORTRAIT MODE")
-                   isIPhoneLandscape = false
-               }
-           }
-       }
+        if isIPad {
+            //           print("iPad MODE")
+            isIPhoneLandscape = false
+        } else {
+            if UIDevice.current.orientation.isLandscape {
+                //      print("iPhone LANDSCAPE MODE")
+                isIPhoneLandscape = true
+            } else {
+                //     print("iPhone PORTRAIT MODE")
+                isIPhoneLandscape = false
+            }
+        }
+    }
 }
 
 struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
     @Binding var isLoading: Bool
     @Binding var bikeMessage: String
-
-  
+    
+    
     func makeUIViewController(context: Context) -> UIViewController {
         let loadingVC = LoadingViewController(bikeMessage: $bikeMessage)
         
@@ -814,12 +845,12 @@ struct LoadingViewControllerRepresentable: UIViewControllerRepresentable {
 
 class LoadingViewController: UIViewController {
     var bikeMessage: Binding<String>
-
+    
     
     // Initializer that accepts a Binding<String>
     init(bikeMessage: Binding<String>) {
         self.bikeMessage = bikeMessage
-
+        
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -845,7 +876,7 @@ class LoadingViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
         
         
- 
+        
     }
     
     // Function to handle app entering background

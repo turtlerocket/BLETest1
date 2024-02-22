@@ -73,6 +73,8 @@ class ExerciseBike: ObservableObject {
  //       print("isWattUnit:", self.isWattUnit)
  //       print("isKMUnit:", self.isKMUnit)
  //       print("sleepTime:", self.sleepTime)
+        
+ 
     }
     
     // Separated connectDevice from init because I cannot send self ExerciseBike to BluetoothManager until all self initialized; this is circular
