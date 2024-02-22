@@ -6,13 +6,20 @@ struct SubscriptionView: View {
     
     var body: some View {
         VStack {
-            Text("Unlock to Full Acces")
+            Text("Unlock to Full Access")
                 .font(.title)
                 .padding()
             
-            Text("Subscribe to access premium content and features!")
-                .multilineTextAlignment(.center)
-                .padding()
+            if (isDemoExpired) {
+                Text("Demo is EXPIRED. Ensure uninterrupted access with your subscription! Enjoy seamless usage of all features!")
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
+            else {
+                Text("Ensure uninterrupted access with your subscription! Enjoy seamless usage of all features!")
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
             
             Button(action: {
                 // Implement subscription purchase logic here
