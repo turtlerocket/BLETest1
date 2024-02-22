@@ -63,7 +63,7 @@ struct ContentView: View {
         // Simulate ALREADY subscribed - comment out for production depoyment
         // Note that isSubscribed should be set in production by the
         // DemoExpirationManager.shared.hasValidSubscription
-        demoModel.isSubscribed = true
+  //      demoModel.isSubscribed = true
     }
     
     var body: some View {
@@ -80,17 +80,17 @@ struct ContentView: View {
                     
                     if !demoModel.isSubscribed {
                         
-                        Text("Expires on \(demoModel.demoExpirationDate)")
-                            .foregroundColor(.white)
-                        
-                        
-                        Button(action: {
-                            // Handle subscription action
-                            isSubscriptionViewVisible = true
-                        }) {
-                            Text("Subscribe Now")
+                        HStack {
+                            Text("Expires on \(demoModel.demoExpirationDate)")
+                                .foregroundColor(.white)
+                            
+                            Button(action: {
+                                // Handle subscription action
+                                isSubscriptionViewVisible = true
+                            }) {
+                                Text("Subscribe Now")
+                            }
                         }
-                        .padding()
                         
                     }
                     
@@ -186,16 +186,17 @@ struct ContentView: View {
                         
                         
                         if !demoModel.isSubscribed {
-                            
-                            Text("Expires on \(demoModel.demoExpirationDate)")
-                                .foregroundColor(.white)
-                            
-                            
-                            Button(action: {
-                                // Handle subscription action
-                                isSubscriptionViewVisible = true
-                            }) {
-                                Text("Subscribe Now")
+                           
+                            HStack {
+                                Text("Expires on \(demoModel.demoExpirationDate)")
+                                    .foregroundColor(.white)
+                                
+                                Button(action: {
+                                    // Handle subscription action
+                                    isSubscriptionViewVisible = true
+                                }) {
+                                    Text("Subscribe Now")
+                                }
                             }
                         }
                         
