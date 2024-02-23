@@ -32,12 +32,12 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-    //       @ObservedObject var viewModel = EchelonBike()
-    @ObservedObject var viewModel = SimulatedExerciseBike()
-    //  @ObservedObject var viewModel = SleepingBike()
+           @ObservedObject var viewModel = EchelonBike()
+  //  @ObservedObject var viewModel = SimulatedExerciseBike()
+  //  @ObservedObject var viewModel = SleepingBike()
     
     @ObservedObject var demoModel = DemoExpirationViewModel()
-    
+ 
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
     // Defines how long before last state change - if more than 10 minutes, sleep screen
@@ -144,15 +144,15 @@ struct ContentView: View {
                     
                     // If Sleep Time is NOT Never, check for when to sleep
                     if (viewModel.sleepTime != -1) {
-                        //        print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
-                        //      print("  timeDifference: \(timeDifference) sec")
-                        //    print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
+                         //       print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
+                           //   print("  timeDifference: \(timeDifference) sec")
+                            //print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
                         
                         // If the bike is in action in last 5 seconds, automatically wake up the app
                         
                         // Sleep app if no activity in last Sleep Time (min)
-                        if ((timeDifference > Double(viewModel.sleepTime * 60)) && (UIScreen.main.brightness != 0)) {
-                            print("  SLEEPING screen from sleeping timeout")
+                        if ((timeDifference > Double(viewModel.sleepTime * 60)) && (UIScreen.main.brightness > 0)) {
+                            print("  SLEEPING screen from sleeping timeout; brightness: \(UIScreen.main.brightness)")
                             UIScreen.main.brightness = 0
                         }
                         else if (timeDifference < Double(viewModel.sleepTime * 60)) {
@@ -272,7 +272,7 @@ struct ContentView: View {
         }
         .onTapGesture {
             print("Screen tapped with UIScreen.main.brightness: \(UIScreen.main.brightness)")
-            if UIScreen.main.brightness == 0 {
+            if UIScreen.main.brightness < 1 {
                 
                 print("  TAP - WAKING up screen")
                 UIScreen.main.brightness = 1

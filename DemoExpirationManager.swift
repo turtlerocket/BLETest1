@@ -41,10 +41,13 @@ class DemoExpirationViewModel: ObservableObject {
     }
 }
 
+import Foundation
 
 class DemoExpirationManager {
-    static let shared = DemoExpirationManager()
+//    static let shared = DemoExpirationManager()
+    static let shared = DemoExpirationManager(isSubscribed: true)
     
+
     private let installationDateKey = "InstallationDate"
     
     var installationDate: Date? {
@@ -64,6 +67,12 @@ class DemoExpirationManager {
                 KeychainService.deleteValue(forKey: installationDateKey)
             }
         }
+    }
+    
+    var isSubscribed: Bool
+    
+    init(isSubscribed: Bool = false) {
+        self.isSubscribed = isSubscribed
     }
     
     func setInstallationDateIfNeeded() {
@@ -88,7 +97,7 @@ class DemoExpirationManager {
     
     func hasValidSubscription() -> Bool {
         // Your subscription validation logic
-        return false
+        return isSubscribed
     }
     
     func getMessageAndExpirationDate() -> (String, String, Bool) {
