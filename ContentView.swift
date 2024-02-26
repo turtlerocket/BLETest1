@@ -33,7 +33,7 @@ struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
            @ObservedObject var viewModel = EchelonBike()
-  //  @ObservedObject var viewModel = SimulatedExerciseBike()
+ //   @ObservedObject var viewModel = SimulatedExerciseBike()
   //  @ObservedObject var viewModel = SleepingBike()
     
     @ObservedObject var demoModel = DemoExpirationViewModel()
@@ -258,7 +258,7 @@ struct ContentView: View {
             //        updateWidthSize()
         }
         .onChange(of: horizontalSizeClass) {
-            print("  onChange HorizontalSizeClass:\(horizontalSizeClass)")
+            print("  onChange HorizontalSizeClass:\(String(describing: horizontalSizeClass))")
             updateWidthSize()
         }
         .onChange(of: viewModel.exerciseData.cadence) {
@@ -603,7 +603,7 @@ struct GaugeWidget: View {
             
             GaugeView(value: isSpeedDisplayed ? convertSpeed(viewModel.exerciseData.speed) : viewModel.exerciseData.currentPower,
                       minValue: 0,
-                      maxValue: isSpeedDisplayed ? (viewModel.isKMUnit ? 70 : 45) : 1000,
+                      maxValue: isSpeedDisplayed ? (viewModel.isKMUnit ? 70 : 45) : 800,
                       unit: isSpeedDisplayed ? (viewModel.isKMUnit ? "km/h" : "mi/h") : "watts")
             .frame(width: CGFloat(gaugeSize), height: CGFloat(gaugeSize)) // Set size of the gauge
             .padding()

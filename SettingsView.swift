@@ -40,6 +40,7 @@ struct SettingsView: View {
                     }
                     .font(.system(size: CGFloat(metricSize) * 1.5))
                 }
+      
                 
                 Section(header: Text("")) {
                     Picker("Sleep Time", selection: $selectedSleepTime) {
@@ -56,8 +57,9 @@ struct SettingsView: View {
                     .font(.system(size: CGFloat(metricSize) * 1.5))
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.black)
             .padding()
-            .background(neomorphicBackground)
             
             Text(errorMessage)
                 .foregroundColor(.red)
@@ -96,6 +98,7 @@ struct SettingsView: View {
                 
                 Spacer()
             }
+            .background(Color.black)
             .padding(.horizontal)
             .padding(.bottom)
         }
@@ -111,6 +114,7 @@ struct SettingsView: View {
             .fill(Color.black)
             .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
             .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
+
     }
 }
 
@@ -140,3 +144,4 @@ struct SettingButton : View {
         }
     }
 }
+
