@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 struct SubscriptionView: View {
     @Binding var isVisible: Bool
@@ -22,10 +23,8 @@ struct SubscriptionView: View {
             }
             
             Button(action: {
-                // Implement subscription purchase logic here
-                // You would typically trigger the purchase process using StoreKit APIs provided by Apple
-                // For the sake of this example, we'll just print a message
-                print("Subscription purchase process triggered")
+                // Purchase subscription when button is tapped
+                IAPManager.shared.fetchProducts()
             }) {
                 Text("Subscribe Now")
                     .font(.title2)
@@ -42,26 +41,24 @@ struct SubscriptionView: View {
                 .padding()
             
             if !isDemoExpired { // Check if demo is not expired
-                            Button(action: {
-                                // Implement cancel subscription logic here
-                                // For the sake of this example, we'll just print a message
-                                print("Cancel to not subscribe yet")
-                                isVisible = false
-                            }) {
-                                Text("Cancel")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(8)
-                            }
-                            .padding()
-                        }
+                Button(action: {
+                    // Implement cancel subscription logic here
+                    // For the sake of this example, we'll just print a message
+                    print("Cancel to not subscribe yet")
+                    isVisible = false
+                }) {
+                    Text("Cancel")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+                .padding()
+            }
         }
     }
 }
-
-import SwiftUI
 
 struct SubscriptionView_Previews: PreviewProvider {
     static var previews: some View {
