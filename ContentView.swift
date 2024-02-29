@@ -63,7 +63,12 @@ struct ContentView: View {
         // Simulate ALREADY subscribed - comment out for production depoyment
         // Note that isSubscribed should be set in production by the
         // DemoExpirationManager.shared.hasValidSubscription
-  //      demoModel.isSubscribed = true
+        //      demoModel.isSubscribed = true
+        // Check if active subscription
+
+   //    KeychainService.shared.deleteValue(forKey: "SubscriptionExpiration")
+
+       KeychainService.shared.checkAndUpdateSubscription()
     }
     
     var body: some View {
@@ -78,7 +83,7 @@ struct ContentView: View {
                     SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                     
                     
-                    if !demoModel.isSubscribed {
+                    if !DemoExpirationManager.shared.isSubscribed{
                         
                         HStack {
                             Text("Expires on \(demoModel.demoExpirationDate)")
@@ -185,7 +190,7 @@ struct ContentView: View {
                         SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                         
                         
-                        if !demoModel.isSubscribed {
+                        if !DemoExpirationManager.shared.isSubscribed {
                            
                             HStack {
                                 Text("Expires on \(demoModel.demoExpirationDate)")

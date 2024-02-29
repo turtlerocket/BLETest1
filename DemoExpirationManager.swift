@@ -1,5 +1,6 @@
 import Foundation
 
+
 class DemoExpirationViewModel: ObservableObject {
     @Published var message: String = ""
     @Published var isSubscribed: Bool = false

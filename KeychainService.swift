@@ -1,6 +1,9 @@
 import Foundation
 import Security
 
+//
+// TODO: Add logic that sets Subscription date to 30 days later.  If 30 days is hit, check for valid subscription.  If not valid, default to demo expiration date.  If expired, indicate Demo expired.  Need to press Subscribe now.
+
 class KeychainService {
     static let shared = KeychainService() // Shared instance
     
@@ -8,25 +11,62 @@ class KeychainService {
     
     func setIsSubscribed(_ isSubscribed: Bool) {
         if isSubscribed {
-            saveDate(value: Date(), forKey: "SubscriptionDate")
+            // Set subscription expiration date to 30 days from the current date
+            let expirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+            saveDate(value: expirationDate, forKey: "SubscriptionExpiration")
         } else {
-            deleteValue(forKey: "SubscriptionDate")
+            deleteValue(forKey: "SubscriptionExpiration")
         }
     }
     
-    func getSubscriptionDate() -> Date? {
-        let subscriptionDate = loadDate(forKey: "SubscriptionDate")
-               if let date = subscriptionDate {
-                   print("Subscription Date: \(date)")
-               } else {
-                   print("Subscription Date: Not set")
-               }
-               return subscriptionDate
+    func getSubscriptionExpiration() -> Date? {
+        let expirationDate = loadDate(forKey: "SubscriptionExpiration")
+        if let date = expirationDate {
+            print("Subscription Expiration Date: \(date)")
+        } else {
+            print("Subscription Expiration Date: Not set")
+        }
+        return expirationDate
     }
     
     func isSubscribed() -> Bool {
-           return getSubscriptionDate() != nil
-       }
+        // Check if the subscription expiration date is set
+        return getSubscriptionExpiration() != nil
+    }
+    
+    func checkAndUpdateSubscription() {
+        // Retrieve the subscription expiration date
+            guard let expirationDate = getSubscriptionExpiration() else {
+                print("Subscription expiration date not found.")
+                return
+            }
+
+            // Check if the subscription expiration is after the current date
+            if expirationDate < Date() {
+                print("Subscription expiration date has passed. Checking for valid subscription...")
+
+                // Check for a valid subscription using IAPManager
+                let isSubscriptionValid = IAPManager.shared.isSubscriptionValid(for: "standardsubscription1")
+
+                if isSubscriptionValid {
+                    // Update subscription expiration for another 30 days
+                    let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+                    saveDate(value: newExpirationDate, forKey: "SubscriptionExpiration")
+                    print("Subscription renewed for another 30 days.")
+                } else {
+                    // Subscription is not valid, mark as not subscribed
+                    setIsSubscribed(false)
+                    print("Subscription is not valid. Marked as not subscribed.")
+                }
+            } else {
+                print("Still subscribed based on expiration date: \(expirationDate)")
+                
+                // TODO: Hack - need to extract all subscription activity to a SubscriptionManager...  this flag controls message of demo expiration
+                DemoExpirationManager.shared.isSubscribed = true
+            }
+    }
+
+    
     
     public func saveDate(value: Date, forKey key: String) {
         guard let data = value.toString().data(using: .utf8) else {

@@ -88,6 +88,7 @@ struct SubscriptionView: View {
         
         .onReceive(iapManager.$isTransactionSuccessful) { success in
             if success {
+                print("Subscription transaction successful")
                 // Transaction was successful, update subscription status or notify other managers/services
                 
                 // For example, if DemoExpirationManager is ObservableObject
@@ -95,6 +96,9 @@ struct SubscriptionView: View {
                 
                 // Store isSubscribed with KeychainService
                 KeychainService.shared.setIsSubscribed(true)
+                
+                // Set this View to be false
+                self.isVisible = false
             }
         }
     }
