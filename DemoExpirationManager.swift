@@ -26,7 +26,8 @@ class DemoExpirationViewModel: ObservableObject {
     }
     
     func checkSubscriptionStatus() {
-        let isSubscribed = DemoExpirationManager.shared.hasValidSubscription()
+  //      let isSubscribed = DemoExpirationManager.shared.hasValidSubscription()
+        let isSubscribed = KeychainService.shared.isSubscribed()
         self.isSubscribed = isSubscribed
     }
     
@@ -53,19 +54,19 @@ class DemoExpirationManager {
     
     var installationDate: Date? {
         get {
-            if let loadedDate = KeychainService.loadDate(forKey: installationDateKey) {
+            if let loadedDate = KeychainService.shared.loadDate(forKey: installationDateKey) {
                 return loadedDate
             } else {
                 let currentDate = Date()
-                KeychainService.saveDate(value: currentDate, forKey: installationDateKey)
+                KeychainService.shared.saveDate(value: currentDate, forKey: installationDateKey)
                 return currentDate
             }
         }
         set {
             if let newValue = newValue {
-                KeychainService.saveDate(value: newValue, forKey: installationDateKey)
+                KeychainService.shared.saveDate(value: newValue, forKey: installationDateKey)
             } else {
-                KeychainService.deleteValue(forKey: installationDateKey)
+                KeychainService.shared.deleteValue(forKey: installationDateKey)
             }
         }
     }

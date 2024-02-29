@@ -2,7 +2,33 @@ import Foundation
 import Security
 
 class KeychainService {
-    static func saveDate(value: Date, forKey key: String) {
+    static let shared = KeychainService() // Shared instance
+    
+    private init() {} // Private initializer to prevent creating multiple instances
+    
+    func setIsSubscribed(_ isSubscribed: Bool) {
+        if isSubscribed {
+            saveDate(value: Date(), forKey: "SubscriptionDate")
+        } else {
+            deleteValue(forKey: "SubscriptionDate")
+        }
+    }
+    
+    func getSubscriptionDate() -> Date? {
+        let subscriptionDate = loadDate(forKey: "SubscriptionDate")
+               if let date = subscriptionDate {
+                   print("Subscription Date: \(date)")
+               } else {
+                   print("Subscription Date: Not set")
+               }
+               return subscriptionDate
+    }
+    
+    func isSubscribed() -> Bool {
+           return getSubscriptionDate() != nil
+       }
+    
+    public func saveDate(value: Date, forKey key: String) {
         guard let data = value.toString().data(using: .utf8) else {
             return
         }
@@ -22,7 +48,16 @@ class KeychainService {
         }
     }
     
-    static func loadDate(forKey key: String) -> Date? {
+    public func deleteValue(forKey key: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key
+        ]
+        
+        SecItemDelete(query as CFDictionary)
+    }
+    
+    public func loadDate(forKey key: String) -> Date? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
@@ -37,15 +72,6 @@ class KeychainService {
         }
         
         return Date(fromString: String(data: data, encoding: .utf8) ?? "")
-    }
-    
-    static func deleteValue(forKey key: String) {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
-        ]
-        
-        SecItemDelete(query as CFDictionary)
     }
 }
 

@@ -1,0 +1,118 @@
+{
+  "identifier" : "0B0530BB",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.0",
+      "familyShareable" : false,
+      "internalID" : "6478621776",
+      "localizations" : [
+        {
+          "description" : "Simplify Your Ride, Elevate Your Stride ",
+          "displayName" : "Simple Spin",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "simplespinpurchase1",
+      "referenceName" : "Simple Spin Purchase",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6478510467",
+    "_developerTeamID" : "NR6UZTWCQ9",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 730840683.90542805,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21451983",
+      "localizations" : [
+
+      ],
+      "name" : "simplespinsubscription1",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6478561284",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Simplify Your Ride, Elevate Your Stride",
+              "displayName" : "Simple Spin",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "standardsubscription1",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "standardsubscription1",
+          "subscriptionGroupID" : "21451983",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
