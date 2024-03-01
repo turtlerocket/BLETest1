@@ -12,7 +12,7 @@ class SimulatedExerciseBike: ExerciseBike {
         // Simulate waiting 10 seconds for initialization
         self.bikeMessage = "Initializing bike..."
                 
-        Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
             self.isLoading = false
             self.bikeMessage = ""
         }

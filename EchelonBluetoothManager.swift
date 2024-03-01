@@ -34,7 +34,7 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
         // Searches for all bluetooth devices
 //        centralManager.scanForPeripherals(withServices: nil, options: nil)
         debugPrint("Scanning for exercise bike UUID: \(bikeUUID)")
-        viewModel.bikeMessage = "Scanning for exercise bike"
+        viewModel.bikeMessage = "Scanning for exercise bike..."
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {

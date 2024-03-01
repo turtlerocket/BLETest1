@@ -32,14 +32,14 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-           @ObservedObject var viewModel = EchelonBike()
-//    @ObservedObject var viewModel = SimulatedExerciseBike()
+//           @ObservedObject var viewModel = EchelonBike()
+    @ObservedObject var viewModel = SimulatedExerciseBike()
   //  @ObservedObject var viewModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
-     @ObservedObject var demoModel = SimulatedExpirationModel()
+//     @ObservedObject var demoModel = SimulatedExpirationModel()
 
-//    @ObservedObject var demoModel = DemoExpirationViewModel()
+    @ObservedObject var demoModel = DemoExpirationViewModel()
  
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -59,6 +59,7 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     
+    // TODO: Need to put a better lessage for Loading Screen when trying to connect to echelon bike.  When Scanning for bike, be sure that users know to disconnect other devices from bike and that the bike is on if an error happens
     
     init() {
         viewModel.connectDevice()
@@ -86,8 +87,8 @@ struct ContentView: View {
                     SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                     
                     
-      //              if !DemoExpirationManager.shared.isSubscribed{
-                                if !SimulatedExpirationManager.shared.isSubscribed{
+                    if !DemoExpirationManager.shared.isSubscribed{
+                     //           if !SimulatedExpirationManager.shared.isSubscribed{
                     
                         HStack {
                             Text("Expires on \(demoModel.demoExpirationDate)")
@@ -193,8 +194,9 @@ struct ContentView: View {
                         
                         SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                         
-                        
-                        if !SimulatedExpirationManager.shared.isSubscribed {
+                        if !DemoExpirationManager.shared.isSubscribed {
+                 
+                 //       if !SimulatedExpirationManager.shared.isSubscribed {
                            
                             HStack {
                                 Text("Expires on \(demoModel.demoExpirationDate)")
@@ -286,7 +288,8 @@ struct ContentView: View {
             
         }
         .onChange(of: demoModel.isDemoExpired) { newValue in
-            if newValue && !SimulatedExpirationManager.shared.isSubscribed {
+            if newValue && !DemoExpirationManager.shared.isSubscribed {
+   //         if newValue && !SimulatedExpirationManager.shared.isSubscribed {
                 print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
                 isSubscriptionViewVisible = true
             }
@@ -808,16 +811,29 @@ class LoadingViewController: UIViewController {
         // Add bike message label
         let bikeMessageLabel = UILabel(frame: CGRect(x: 0, y: activityIndicator.frame.maxY + 20, width: 400, height: 50))
         
-        //    print("LOADING SCREEN: bikeMessage:\(bikeMessage)")
         bikeMessageLabel.text = bikeMessage.wrappedValue
         bikeMessageLabel.textColor = .white
         bikeMessageLabel.textAlignment = .center
         bikeMessageLabel.center.x = loadingView.center.x
         
         loadingView.addSubview(bikeMessageLabel)
+
+        
+        // Add message that be sure bike is turned on and no other apps are connected to it.
+        let informMessage = UILabel(frame: CGRect(x: 0, y: bikeMessageLabel.frame.maxY + 20, width: 400, height: 0))
+        informMessage.numberOfLines = 0
+        informMessage.lineBreakMode = .byWordWrapping
+        informMessage.text = "Please ensure your bike is powered on and no other apps are connected to it."
+        informMessage.textColor = .white
+        informMessage.textAlignment = .center
+        informMessage.sizeToFit() // Adjust the label's frame based on its content
+        informMessage.center.x = loadingView.center.x
+
+        loadingView.addSubview(informMessage)
         
         view.addSubview(loadingView)
     }
+
     
     func removeLoadingScreen() {
         DispatchQueue.main.async {
