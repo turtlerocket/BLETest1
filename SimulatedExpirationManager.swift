@@ -6,3 +6,63 @@
 //
 
 import Foundation
+
+
+class SimulatedExpirationModel: ObservableObject {
+    @Published var message: String = ""
+    @Published var isSubscribed: Bool = true
+    @Published var demoExpirationDate: String = ""
+    @Published var isDemoExpired: Bool = false
+    
+   
+    init() {
+      
+    }
+    
+    deinit {
+   
+    }
+    
+    func updateMessage() {
+       
+    }
+    
+    func checkSubscriptionStatus() {
+
+        self.isSubscribed = isSubscribed
+    }
+    
+    func startOrStopTimer() {
+   
+    }
+}
+
+import Foundation
+
+class SimulatedExpirationManager {
+//    static let shared = DemoExpirationManager()
+//    static let shared = DemoExpirationManager(isSubscribed: true)
+    static let shared = SimulatedExpirationManager()
+
+
+    private let installationDateKey = "InstallationDate"
+    
+
+
+    
+    var isSubscribed: Bool = true
+    
+
+
+func isDemoPeriodExpired() -> Bool {
+return false
+}
+    
+    func hasValidSubscription() -> Bool {
+        // Your subscription validation logic
+        return isSubscribed
+    }
+    
+    
+    
+}

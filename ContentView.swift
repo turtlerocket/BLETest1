@@ -32,11 +32,14 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
- //          @ObservedObject var viewModel = EchelonBike()
-    @ObservedObject var viewModel = SimulatedExerciseBike()
+           @ObservedObject var viewModel = EchelonBike()
+//    @ObservedObject var viewModel = SimulatedExerciseBike()
   //  @ObservedObject var viewModel = SleepingBike()
-    
-    @ObservedObject var demoModel = DemoExpirationViewModel()
+
+    // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
+     @ObservedObject var demoModel = SimulatedExpirationModel()
+
+//    @ObservedObject var demoModel = DemoExpirationViewModel()
  
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -83,8 +86,9 @@ struct ContentView: View {
                     SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                     
                     
-                    if !DemoExpirationManager.shared.isSubscribed{
-                        
+      //              if !DemoExpirationManager.shared.isSubscribed{
+                                if !SimulatedExpirationManager.shared.isSubscribed{
+                    
                         HStack {
                             Text("Expires on \(demoModel.demoExpirationDate)")
                                 .foregroundColor(.white)
@@ -190,7 +194,7 @@ struct ContentView: View {
                         SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                         
                         
-                        if !DemoExpirationManager.shared.isSubscribed {
+                        if !SimulatedExpirationManager.shared.isSubscribed {
                            
                             HStack {
                                 Text("Expires on \(demoModel.demoExpirationDate)")
@@ -258,10 +262,6 @@ struct ContentView: View {
             }
             
         }
-        .onAppear {
-            //  print("  onAppear")
-            //        updateWidthSize()
-        }
         .onChange(of: horizontalSizeClass) {
             print("  onChange HorizontalSizeClass:\(String(describing: horizontalSizeClass))")
             updateWidthSize()
@@ -285,6 +285,12 @@ struct ContentView: View {
             }
             
         }
+        .onChange(of: demoModel.isDemoExpired) { newValue in
+            if newValue && !SimulatedExpirationManager.shared.isSubscribed {
+                print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
+                isSubscriptionViewVisible = true
+            }
+        }
         .overlay(
             Group {
                 if viewModel.isLoading {
@@ -305,15 +311,11 @@ struct ContentView: View {
                 .background(Color.white)
                 .cornerRadius(10)
                 .padding()
-            
-            
         }
         
+        
     }
-    
-    
-    
-    
+   
     private func updateWidthSize() {
         
         // If an IPhone, check whether portrait or landscape

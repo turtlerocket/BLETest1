@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 //
-// TODO: Add logic that sets Subscription date to 30 days later.  If 30 days is hit, check for valid subscription.  If not valid, default to demo expiration date.  If expired, indicate Demo expired.  Need to press Subscribe now.
+// TODO: Add logic that sets Subscription date to 5 minutes (production will be 30 days0.  If 30 days is hit, check for valid subscription.  If not valid, default to demo expiration date.  If expired, indicate Demo expired.  Need to press Subscribe now.
 
 class KeychainService {
     static let shared = KeychainService() // Shared instance
@@ -10,11 +10,15 @@ class KeychainService {
     private init() {} // Private initializer to prevent creating multiple instances
     
     func setIsSubscribed(_ isSubscribed: Bool) {
+        
         if isSubscribed {
-            // Set subscription expiration date to 30 days from the current date
-            let expirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
-            saveDate(value: expirationDate, forKey: "SubscriptionExpiration")
+            print("Setting subscription")
+
+            updateSubscriptionExpiration()
+            
         } else {
+            print("Removing subscription")
+
             deleteValue(forKey: "SubscriptionExpiration")
         }
     }
@@ -34,6 +38,18 @@ class KeychainService {
         return getSubscriptionExpiration() != nil
     }
     
+    private func updateSubscriptionExpiration() {
+       
+        
+        let newExpirationDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
+
+        print("Subscription renewed for another round with new expiration date: \(newExpirationDate)")
+        
+//        let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+        saveDate(value: newExpirationDate, forKey: "SubscriptionExpiration")
+
+    }
+    
     func checkAndUpdateSubscription() {
         // Retrieve the subscription expiration date
             guard let expirationDate = getSubscriptionExpiration() else {
@@ -43,16 +59,15 @@ class KeychainService {
 
             // Check if the subscription expiration is after the current date
             if expirationDate < Date() {
-                print("Subscription expiration date has passed. Checking for valid subscription...")
+                print("Subscription expiration date has expired. Checking for valid subscription...")
 
                 // Check for a valid subscription using IAPManager
                 let isSubscriptionValid = IAPManager.shared.isSubscriptionValid(for: "standardsubscription1")
 
                 if isSubscriptionValid {
                     // Update subscription expiration for another 30 days
-                    let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
-                    saveDate(value: newExpirationDate, forKey: "SubscriptionExpiration")
-                    print("Subscription renewed for another 30 days.")
+                    updateSubscriptionExpiration()
+
                 } else {
                     // Subscription is not valid, mark as not subscribed
                     setIsSubscribed(false)

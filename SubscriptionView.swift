@@ -88,6 +88,9 @@ struct SubscriptionView: View {
         
         .onReceive(iapManager.$isTransactionSuccessful) { success in
             if success {
+                // Clear error message
+                self.errorMessage = ""
+                
                 print("Subscription transaction successful")
                 // Transaction was successful, update subscription status or notify other managers/services
                 
@@ -99,6 +102,13 @@ struct SubscriptionView: View {
                 
                 // Set this View to be false
                 self.isVisible = false
+            }
+            else {
+                // Error message if subscription transaction fails
+                self.errorMessage = "Unable to complete subscription transaction."
+                
+                // Set this View to be false
+                self.isVisible = true
             }
         }
     }
