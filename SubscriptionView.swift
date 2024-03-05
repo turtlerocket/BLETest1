@@ -7,6 +7,8 @@ struct SubscriptionView: View {
     @State private var products: [SKProduct] = []
     @State private var errorMessage: String = ""
     
+    @Binding var isWorking: Bool
+    
     @ObservedObject var iapManager = IAPManager.shared // Observed object to monitor transaction success
     
     
@@ -28,6 +30,8 @@ struct SubscriptionView: View {
             }
             
             Button(action: {
+                self.isWorking = true
+                
                 // Purchase subscription when button is tapped
                 IAPManager.shared.fetchProducts()
                 
@@ -87,10 +91,15 @@ struct SubscriptionView: View {
         }
         
         .onReceive(iapManager.$isTransactionSuccessful) { success in
+            
+            // Server work call is done
+            self.isWorking = false
+            
             if success {
                 // Clear error message
                 self.errorMessage = ""
-                
+
+
                 print("Subscription transaction successful")
                 // Transaction was successful, update subscription status or notify other managers/services
                 
@@ -102,6 +111,7 @@ struct SubscriptionView: View {
                 
                 // Set this View to be false
                 self.isVisible = false
+                
             }
             else {
                 // Error message if subscription transaction fails
@@ -109,7 +119,9 @@ struct SubscriptionView: View {
                 
                 // Set this View to be false
                 self.isVisible = true
+        
             }
+
         }
     }
 }
@@ -118,12 +130,12 @@ struct SubscriptionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // Preview with Cancel button visible
-            SubscriptionView(isVisible: .constant(true), isDemoExpired: .constant(false))
+            SubscriptionView(isVisible: .constant(true), isDemoExpired: .constant(false), isWorking: .constant(false))
                 .previewLayout(.sizeThatFits)
                 .padding()
             
             // Preview with Cancel button hidden
-            SubscriptionView(isVisible: .constant(true), isDemoExpired: .constant(true))
+            SubscriptionView(isVisible: .constant(true), isDemoExpired: .constant(true),isWorking: .constant(false))
                 .previewLayout(.sizeThatFits)
                 .padding()
         }

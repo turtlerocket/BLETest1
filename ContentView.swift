@@ -47,6 +47,9 @@ struct ContentView: View {
     @State private var lastStateChangeTime = Date()
     
     @State private var isLoading = true
+
+    @State private var isWorking = false    // Only for server side subscritpion transaction and check calls
+
     //    @State private var isIPhoneLandscape: Bool = false
     //    @State private var isIPad = true
     
@@ -263,6 +266,8 @@ struct ContentView: View {
                 }
             }
             
+            
+            
         }
         .onChange(of: horizontalSizeClass) {
             print("  onChange HorizontalSizeClass:\(String(describing: horizontalSizeClass))")
@@ -306,7 +311,6 @@ struct ContentView: View {
                     LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading,
                                                        bikeMessage: $viewModel.bikeMessage)
                 }
-                
             }
         )
         .fullScreenCover(isPresented: $isSettingsVisible) {
@@ -315,12 +319,17 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $isSubscriptionViewVisible) {
             
-            SubscriptionView(isVisible: $isSubscriptionViewVisible, isDemoExpired: $demoModel.isDemoExpired)
+            SubscriptionView(isVisible: $isSubscriptionViewVisible, isDemoExpired: $demoModel.isDemoExpired, isWorking: $isWorking)
                 .padding()
                 .background(Color.white)
                 .cornerRadius(10)
                 .padding()
         }
+        
+        if isWorking {
+                      WorkingView(isWorking: $isWorking)
+                          .edgesIgnoringSafeArea(.all)
+                  }
         
         
     }
