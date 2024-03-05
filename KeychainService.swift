@@ -40,48 +40,61 @@ class KeychainService {
     
     private func updateSubscriptionExpiration() {
        
-        
+        //        let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
         let newExpirationDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
 
         print("Subscription renewed for another round with new expiration date: \(newExpirationDate)")
         
-//        let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+        // Set the global variable of subscription to TRUE
+        DemoExpirationManager.shared.isSubscribed = true
+        
         saveDate(value: newExpirationDate, forKey: "SubscriptionExpiration")
 
     }
     
     func checkAndUpdateSubscription() {
-        // Retrieve the subscription expiration date
-            guard let expirationDate = getSubscriptionExpiration() else {
-                print("Subscription expiration date not found.")
-                return
-            }
+// TODO: There may be scenarios when the subscription expiration date may be missing, but also subscribed.  Thus, if expirationDate is not set, still check for valid subscription...
+        // Retrieve the subscription expiration date; if found, NO NEED to check check server for subscription
+        
+        guard let expirationDate = getSubscriptionExpiration() else {
+            print("Subscription expiration date NOT found. Checking server for valid subscription...")
+            
+            checkServerSubscription()
+            
+            return
+        }
 
-            // Check if the subscription expiration is after the current date
-            if expirationDate < Date() {
-                print("Subscription expiration date has expired. Checking for valid subscription...")
+        
+        // Check if the subscription expiration is after the current date
+        if expirationDate < Date() {
+            print("Subscription expiration date has EXPIRED. Checking server for valid subscription...")
 
-                // Check for a valid subscription using IAPManager
-                let isSubscriptionValid = IAPManager.shared.isSubscriptionValid(for: "standardsubscription1")
-
-                if isSubscriptionValid {
-                    // Update subscription expiration for another 30 days
-                    updateSubscriptionExpiration()
-
-                } else {
-                    // Subscription is not valid, mark as not subscribed
-                    setIsSubscribed(false)
-                    print("Subscription is not valid. Marked as not subscribed.")
-                }
-            } else {
-                print("Still subscribed based on expiration date: \(expirationDate)")
-                
-                // TODO: Hack - need to extract all subscription activity to a SubscriptionManager...  this flag controls message of demo expiration
-                DemoExpirationManager.shared.isSubscribed = true
-            }
+            checkServerSubscription()
+            
+            
+        } else {
+            print("Still subscribed based on expiration date: \(expirationDate)")
+            
+            // TODO: Hack - need to extract all subscription activity to a SubscriptionManager...  this flag controls message of demo expiration
+            DemoExpirationManager.shared.isSubscribed = true
+        }
     }
 
-    
+    // Check Apple Storekit server for active subscription
+    public func checkServerSubscription() {
+
+        // Check for a valid subscription using IAPManager
+        IAPManager.shared.isSubscriptionValid(for: "standardsubscription1") { isValid in
+            if isValid {
+                // Update subscription expiration for another 30 days
+                self.updateSubscriptionExpiration()
+            } else {
+                // Subscription is not valid, mark as not subscribed
+                self.setIsSubscribed(false)
+                print("Subscription is not valid. Marked as not subscribed.")
+            }
+        }
+    }
     
     public func saveDate(value: Date, forKey key: String) {
         guard let data = value.toString().data(using: .utf8) else {

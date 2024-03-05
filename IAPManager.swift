@@ -107,34 +107,109 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
     private func checkSubscriptionStatus() {
         print("Checking subscription status")
         // Your logic to check subscription status goes here
-        self.isSubscribed = isSubscriptionValid(for: "standardsubscription1")          // Retrieve the app's receipt
+        
+        // Call isSubscriptionValid function to check subscription status
+        isSubscriptionValid(for: "standardsubscription1") { isValid in
+            // Handle the result of the subscription validation
+            DispatchQueue.main.async {
+                self.isSubscribed = isValid
+            }
+        }
     }
     
-    func isSubscriptionValid(for productIdentifier: String) -> Bool {
+    func isSubscriptionValid(for productIdentifier: String, completion: @escaping (Bool) -> Void) {
         // Check if the user has a valid subscription for the given product identifier
-        guard let receiptURL = Bundle.main.appStoreReceiptURL,
-              FileManager.default.fileExists(atPath: receiptURL.path) else {
+        guard let receiptURL = Bundle.main.appStoreReceiptURL else {
+ //             FileManager.default.fileExists(atPath: receiptURL.path) else {
             // No receipt found, subscription is invalid
             print("No receipt found, subscription is invalid")
-            return false
+            completion(false)
+            return
         }
+   
+        debugPrint("Receipt URL: \(receiptURL)")
         
         do {
-            // Load receipt data
             let receiptData = try Data(contentsOf: receiptURL)
+            let receiptString = receiptData.base64EncodedString()
             
-            // Send receipt data to your server for validation
-            // You should implement your server-side receipt validation logic here
-            // After validating the receipt, determine if the subscription is valid
-            print("Receipt data loaded successfully. Sending to server for validation...")
+//            let requestDictionary = ["receipt-data": receiptString]
+ //           let requestData = try JSONSerialization.data(withJSONObject: requestDictionary, options: [])
+       
+            var requestDictionary: [String: Any] = ["receipt-data": receiptString]
+              // Add your shared secret to the request dictionary
+              requestDictionary["password"] = "8166c870463f4bbe926db3953a7e46b2"
+
+              let requestData = try JSONSerialization.data(withJSONObject: requestDictionary, options: [])
             
-            // For demonstration purposes, let's assume the subscription is always valid
-            return true
+            debugPrint("Receipt receiptData: \(receiptData)")
+            
+            // Send the receipt data to Apple's validation server
+            // TODO: Switch PRODUCTION receipt URL for validation
+//#if DEBUG
+ //   let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt"
+//#else
+  //  let validationURLString = "https://buy.itunes.apple.com/verifyReceipt"
+//#endif
+            let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt" // or "https://buy.itunes.apple.com/verifyReceipt" for production
+ 
+            guard let validationURL = URL(string: validationURLString) else {
+                print("Invalid validation URL")
+                completion(false)
+                return
+            }
+            
+            var request = URLRequest(url: validationURL)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = requestData
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error validating receipt: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
+                guard let data = data else {
+                    print("No data received")
+                    completion(false)
+                    return
+                }
+                
+                do {
+                    guard let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                        print("Invalid JSON response")
+                        completion(false)
+                        return
+                    }
+                    
+                    print("Receipt validation response status: \(jsonResponse["status"])")
+
+                    // Example parsing: Check if the status field indicates the subscription is active
+                    if let status = jsonResponse["status"] as? Int, status == 0 {
+                        print("Server Subscrition valid and active!")
+
+                        // Status 0 usually indicates an active subscription
+                        completion(true)
+                    } else {
+                        // Subscription is not active or status not found
+                        completion(false)
+                    }
+                } catch {
+                    print("Error parsing receipt validation response: \(error.localizedDescription)")
+                    completion(false)
+                }
+
+                
+            }
+            
+            task.resume()
         } catch {
             print("Error loading receipt data: \(error.localizedDescription)")
-            return false
+            completion(false)
         }
     }
-
+    
     
 }
