@@ -29,7 +29,7 @@ class SimulatedExpirationModel: ObservableObject {
     
     func checkSubscriptionStatus() {
 
-        self.isSubscribed = isSubscribed
+        self.isSubscribed = true
     }
     
     func startOrStopTimer() {
