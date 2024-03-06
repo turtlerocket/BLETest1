@@ -32,9 +32,9 @@ var metricSize: Int = MetricSize.medium
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
     // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-           @ObservedObject var viewModel = EchelonBike()
-//    @ObservedObject var viewModel = SimulatedExerciseBike()
-  //  @ObservedObject var viewModel = SleepingBike()
+           @ObservedObject var bikeModel = EchelonBike()
+//    @ObservedObject var bikeModel = SimulatedExerciseBike()
+  //  @ObservedObject var bikeModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
 //     @ObservedObject var demoModel = SimulatedExpirationModel()
@@ -65,17 +65,18 @@ struct ContentView: View {
     // TODO: Need to put a better lessage for Loading Screen when trying to connect to echelon bike.  When Scanning for bike, be sure that users know to disconnect other devices from bike and that the bike is on if an error happens
     
     init() {
-        viewModel.connectDevice()
+        //    KeychainService.shared.deleteValue(forKey: "SubscriptionExpiration")
+        bikeModel.connectDevice()
         
         // Simulate ALREADY subscribed - comment out for production depoyment
         // Note that isSubscribed should be set in production by the
         // DemoExpirationManager.shared.hasValidSubscription
         //      demoModel.isSubscribed = true
         // Check if active subscription
-
-   //    KeychainService.shared.deleteValue(forKey: "SubscriptionExpiration")
-
-       KeychainService.shared.checkAndUpdateSubscription()
+     
+        KeychainService.shared.checkAndUpdateSubscription()
+        
+        
     }
     
     var body: some View {
@@ -83,7 +84,7 @@ struct ContentView: View {
         GeometryReader {    geometry in
             if (!orientationController.isIPhoneLandscape) {
                 VStack {
-                    GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: viewModel)
+                    GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: bikeModel)
                     
                     Spacer()
                     
@@ -109,16 +110,16 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    NeomorphicTable(viewModel: viewModel)
+                    NeomorphicTable(viewModel: bikeModel)
                     
                     Spacer()
                     
                     // Buttons for start/pause and reset
                     HStack {
                         Spacer()
-                        if viewModel.isTimerRunning {
+                        if bikeModel.isTimerRunning {
                             Button(action: {
-                                viewModel.stopTimer()
+                                bikeModel.stopTimer()
                             }) {
                                 Image(systemName: "pause.fill") // Use system image for Pause action
                                     .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -126,7 +127,7 @@ struct ContentView: View {
                             .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
                         } else {
                             Button(action: {
-                                viewModel.startTimer()
+                                bikeModel.startTimer()
                             }) {
                                 Image(systemName: "play.fill") // Use system image for Start action
                                     .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -137,7 +138,7 @@ struct ContentView: View {
                         Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
                         
                         Button(action: {
-                            viewModel.resetTimer()
+                            bikeModel.resetTimer()
                         }) {
                             Text("Reset")
                                 .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -156,19 +157,19 @@ struct ContentView: View {
                     let timeDifference = currentTime.timeIntervalSince(lastStateChangeTime)
                     
                     // If Sleep Time is NOT Never, check for when to sleep
-                    if (viewModel.sleepTime != -1) {
-                         //       print("  Sleep time is: \(Double(viewModel.sleepTime * 60)) sec")
+                    if (bikeModel.sleepTime != -1) {
+                         //       print("  Sleep time is: \(Double(bikeModel.sleepTime * 60)) sec")
                            //   print("  timeDifference: \(timeDifference) sec")
                             //print("  UIScreen.main.brightness: \(UIScreen.main.brightness)")
                         
                         // If the bike is in action in last 5 seconds, automatically wake up the app
                         
                         // Sleep app if no activity in last Sleep Time (min)
-                        if ((timeDifference > Double(viewModel.sleepTime * 60)) && (UIScreen.main.brightness > 0)) {
+                        if ((timeDifference > Double(bikeModel.sleepTime * 60)) && (UIScreen.main.brightness > 0)) {
                             print("  SLEEPING screen from sleeping timeout; brightness: \(UIScreen.main.brightness)")
                             UIScreen.main.brightness = 0
                         }
-                        else if (timeDifference < Double(viewModel.sleepTime * 60)) {
+                        else if (timeDifference < Double(bikeModel.sleepTime * 60)) {
                             if (UIScreen.main.brightness == 0) {
                                 print("  WAKING screen from sleeping timeout")
                                 UIScreen.main.brightness = 1
@@ -192,7 +193,7 @@ struct ContentView: View {
                 // If IPhone is landscape mode do this horizontal view
                 HStack {
                     VStack {
-                        GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: viewModel)
+                        GaugeWidget(isSpeedDisplayed: $isSpeedDisplayed, viewModel: bikeModel)
                         
                         
                         SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
@@ -217,16 +218,16 @@ struct ContentView: View {
                     }
                     
                     VStack {
-                        NeomorphicTable(viewModel: viewModel)
+                        NeomorphicTable(viewModel: bikeModel)
                         
                         Spacer()
                         
                         // Buttons for start/pause and reset
                         HStack {
                             Spacer()
-                            if viewModel.isTimerRunning {
+                            if bikeModel.isTimerRunning {
                                 Button(action: {
-                                    viewModel.stopTimer()
+                                    bikeModel.stopTimer()
                                 }) {
                                     Image(systemName: "pause.fill") // Use system image for Pause action
                                         .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -234,7 +235,7 @@ struct ContentView: View {
                                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.red, fontColor: Color.white)) // Apply neomorphic button style
                             } else {
                                 Button(action: {
-                                    viewModel.startTimer()
+                                    bikeModel.startTimer()
                                 }) {
                                     Image(systemName: "play.fill") // Use system image for Start action
                                         .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -245,7 +246,7 @@ struct ContentView: View {
                             Spacer(minLength: 10).frame(maxWidth: 20) // Add spacer with maximum length of 50
                             
                             Button(action: {
-                                viewModel.resetTimer()
+                                bikeModel.resetTimer()
                             }) {
                                 Text("Reset")
                                     .font(.system(size: geometry.size.width * 0.03)) // Adjust font size based on width
@@ -273,7 +274,7 @@ struct ContentView: View {
             print("  onChange HorizontalSizeClass:\(String(describing: horizontalSizeClass))")
             updateWidthSize()
         }
-        .onChange(of: viewModel.exerciseData.cadence) {
+        .onChange(of: bikeModel.exerciseData.cadence) {
             if (UIScreen.main.brightness == 0) {
                 print("  WAKING screen from cadence change!!")
                 UIScreen.main.brightness = 1
@@ -293,6 +294,8 @@ struct ContentView: View {
             
         }
         .onChange(of: demoModel.isDemoExpired) { newValue in
+            print("DEMO IS EXPIRED")
+      
             if newValue && !DemoExpirationManager.shared.isSubscribed {
    //         if newValue && !SimulatedExpirationManager.shared.isSubscribed {
                 print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
@@ -305,17 +308,25 @@ struct ContentView: View {
                 print("YOU ARE SUBSCRIBED Flag")
             }
         }
+        .onAppear {
+            // Check if demo expired from the start
+    //        print("ContentView init subscription view: \(isSubscriptionViewVisible)")
+     //       print("ContentView init demo expired flag: \(demoModel.isDemoExpired)")
+            if (demoModel.isDemoExpired && !demoModel.isSubscribed) {
+                isSubscriptionViewVisible = true
+            }
+        }
         .overlay(
             Group {
-                if viewModel.isLoading {
-                    LoadingViewControllerRepresentable(isLoading: $viewModel.isLoading,
-                                                       bikeMessage: $viewModel.bikeMessage)
+                if bikeModel.isLoading {
+                    LoadingViewControllerRepresentable(isLoading: $bikeModel.isLoading,
+                                                       bikeMessage: $bikeModel.bikeMessage)
                 }
             }
         )
         .fullScreenCover(isPresented: $isSettingsVisible) {
             // Present your SettingsView here
-            SettingsView(isVisible: $isSettingsVisible, viewModel: viewModel)
+            SettingsView(isVisible: $isSettingsVisible, viewModel: bikeModel)
         }
         .fullScreenCover(isPresented: $isSubscriptionViewVisible) {
             

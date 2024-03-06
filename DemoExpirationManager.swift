@@ -19,11 +19,16 @@ class DemoExpirationViewModel: ObservableObject {
         timer?.invalidate()
     }
     
+    // This method is called every 5 seconds to check expiration date of demo
     func updateMessage() {
         let (message, expirationDate, isExpired) = DemoExpirationManager.shared.getMessageAndExpirationDate()
         self.message = message
         self.demoExpirationDate = expirationDate
         self.isDemoExpired = isExpired
+        
+        print("Message updated: \(message)")
+         print("Demo expiration date updated: \(expirationDate)")
+         print("Demo expired flag updated: \(isExpired)")
     }
     
     func checkSubscriptionStatus() {
@@ -34,9 +39,11 @@ class DemoExpirationViewModel: ObservableObject {
     
     func startOrStopTimer() {
         if isSubscribed {
+            print("Stop periodic demo expired check because SUBSCRIBED.")
             timer?.invalidate()
         } else {
-            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            // Update message and status every 5 seconds
+            timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
                 self?.updateMessage()
             }
         }
@@ -72,7 +79,7 @@ class DemoExpirationManager {
         }
     }
     
-    var isSubscribed: Bool
+    public var isSubscribed: Bool
     
     init(isSubscribed: Bool = false) {
         self.isSubscribed = isSubscribed
@@ -102,6 +109,7 @@ class DemoExpirationManager {
         // Your subscription validation logic
         return isSubscribed
     }
+    
     
     func getMessageAndExpirationDate() -> (String, String, Bool) {
         let expirationDate = demoExpirationDate()
