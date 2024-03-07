@@ -337,10 +337,7 @@ struct ContentView: View {
                 .padding()
         }
         
-        if isWorking {
-                      WorkingView(isWorking: $isWorking)
-                          .edgesIgnoringSafeArea(.all)
-                  }
+      
         
         
     }

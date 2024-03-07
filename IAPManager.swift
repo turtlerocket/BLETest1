@@ -188,7 +188,7 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
 
                     // Example parsing: Check if the status field indicates the subscription is active
                     if let status = jsonResponse["status"] as? Int, status == 0 {
-                        print("Server Subscrition valid and active!")
+                        print("Server Subscription valid and active!")
 
                         // Status 0 usually indicates an active subscription
                         completion(true)

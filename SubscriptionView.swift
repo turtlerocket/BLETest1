@@ -45,6 +45,11 @@ struct SubscriptionView: View {
             }
             .padding()
             
+            if isWorking {
+                          ProgressView("Subscribing...")
+                              .padding()
+                      }
+            
             // Display error message if no products found
             if !errorMessage.isEmpty {
                 Text(errorMessage)
@@ -115,7 +120,7 @@ struct SubscriptionView: View {
             }
             else {
                 // Error message if subscription transaction fails
-                self.errorMessage = "Unable to complete subscription transaction."
+                self.errorMessage = "Please subscribe to unlock app."
                 
                 // Set this View to be false
                 self.isVisible = true

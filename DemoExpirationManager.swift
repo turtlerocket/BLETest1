@@ -29,6 +29,13 @@ class DemoExpirationViewModel: ObservableObject {
         print("Message updated: \(message)")
          print("Demo expiration date updated: \(expirationDate)")
          print("Demo expired flag updated: \(isExpired)")
+        
+        // HACK: check if DemoExpirationManager is subscribed, if yes, stop the demo expiration check
+        if (DemoExpirationManager.shared.isSubscribed) {
+            print("Noticed user is subribed.  Stop further demo expiration checks")
+            self.isSubscribed = true
+            startOrStopTimer()
+        }
     }
     
     func checkSubscriptionStatus() {
