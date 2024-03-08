@@ -1,6 +1,8 @@
 import Foundation
 import StoreKit
 
+import StoreKit
+
 class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObserver, ObservableObject {
     
     static let shared = IAPManager()
@@ -10,7 +12,6 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
     @Published var products: [SKProduct] = []
     
     @Published var isSubscribed = false // Add isSubscribed property
-    
     
     private override init() {
         super.init()
@@ -120,39 +121,28 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
     func isSubscriptionValid(for productIdentifier: String, completion: @escaping (Bool) -> Void) {
         // Check if the user has a valid subscription for the given product identifier
         guard let receiptURL = Bundle.main.appStoreReceiptURL else {
- //             FileManager.default.fileExists(atPath: receiptURL.path) else {
             // No receipt found, subscription is invalid
             print("No receipt found, subscription is invalid")
             completion(false)
             return
         }
-   
+        
         debugPrint("Receipt URL: \(receiptURL)")
         
         do {
             let receiptData = try Data(contentsOf: receiptURL)
             let receiptString = receiptData.base64EncodedString()
             
-//            let requestDictionary = ["receipt-data": receiptString]
- //           let requestData = try JSONSerialization.data(withJSONObject: requestDictionary, options: [])
-       
             var requestDictionary: [String: Any] = ["receipt-data": receiptString]
-              // Add your shared secret to the request dictionary
-              requestDictionary["password"] = "8166c870463f4bbe926db3953a7e46b2"
-
-              let requestData = try JSONSerialization.data(withJSONObject: requestDictionary, options: [])
+            // Add your shared secret to the request dictionary
+            requestDictionary["password"] = "8166c870463f4bbe926db3953a7e46b2"
+            
+            let requestData = try JSONSerialization.data(withJSONObject: requestDictionary, options: [])
             
             debugPrint("Receipt receiptData: \(receiptData)")
             
             // Send the receipt data to Apple's validation server
-            // TODO: Switch PRODUCTION receipt URL for validation
-//#if DEBUG
- //   let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt"
-//#else
-  //  let validationURLString = "https://buy.itunes.apple.com/verifyReceipt"
-//#endif
             let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt" // or "https://buy.itunes.apple.com/verifyReceipt" for production
- 
             guard let validationURL = URL(string: validationURLString) else {
                 print("Invalid validation URL")
                 completion(false)
@@ -185,11 +175,11 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
                     }
                     
                     print("Receipt validation response status: \(jsonResponse["status"])")
-
+                    
                     // Example parsing: Check if the status field indicates the subscription is active
                     if let status = jsonResponse["status"] as? Int, status == 0 {
                         print("Server Subscription valid and active!")
-
+                        
                         // Status 0 usually indicates an active subscription
                         completion(true)
                     } else {
@@ -200,8 +190,6 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
                     print("Error parsing receipt validation response: \(error.localizedDescription)")
                     completion(false)
                 }
-
-                
             }
             
             task.resume()
@@ -211,5 +199,15 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
         }
     }
     
-    
+    func openSubscriptionManagement(completion: @escaping (Bool) -> Void) {
+        if let url = URL(string: "itms-apps://apps.apple.com/account/subscriptions") {
+            UIApplication.shared.open(url, options: [:]) { success in
+                if success {
+                    print("Opened App Store for subscription management")
+                } else {
+                    print("Failed to open App Store for subscription management")
+                }
+            }
+        }
+    }
 }

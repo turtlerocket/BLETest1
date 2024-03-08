@@ -40,7 +40,6 @@ struct SettingsView: View {
                     }
                     .font(.system(size: CGFloat(metricSize) * 1.5))
                 }
-      
                 
                 Section(header: Text("")) {
                     Picker("Sleep Time", selection: $selectedSleepTime) {
@@ -59,11 +58,12 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.black)
-            .padding()
             
+           
             Text(errorMessage)
                 .foregroundColor(.red)
-                .padding()
+            
+          
             
             HStack {
                 Spacer()
@@ -72,6 +72,8 @@ struct SettingsView: View {
                     isVisible = false
                 }
                 .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
+                
+               
                 
                 Button("Save") {
                     // Accessing the shared instance of ConfigurationManager
@@ -101,6 +103,42 @@ struct SettingsView: View {
             .background(Color.black)
             .padding(.horizontal)
             .padding(.bottom)
+            
+            // If active subscription, there should be a message that your subscription auto-renews on given date and provide
+            // a Unsubscribe button.
+            // IF no active subscription, indicate expiration date
+            let (message, _, _) = DemoExpirationManager.shared.getMessageAndExpirationDate()
+            
+            if DemoExpirationManager.shared.hasValidSubscription() {
+                HStack {
+                    Text(message)
+                        .foregroundColor(.white)
+                        .padding()
+                    
+                    Button("Unsubscribe") {
+                        // Add your unsubscribe logic here
+                        // For example:
+                        IAPManager.shared.openSubscriptionManagement() { success in
+                            if success {
+                                // Handle the case where unsubscribing was successful
+                                print("Subscription Management opened successfully")
+                            } else {
+                                // Handle the case where unsubscribing failed
+                                print("Failed to open subscription management")
+                            }
+                        }
+                    }
+                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.black, fontColor: Color.white))
+         
+                }
+                .padding()
+                
+            } else {
+                Text(message)
+                    .foregroundColor(.red)
+                    .padding()
+            }
+  
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black)
@@ -114,7 +152,6 @@ struct SettingsView: View {
             .fill(Color.black)
             .shadow(color: Color.white.opacity(0.2), radius: 10, x: -5, y: -5)
             .shadow(color: Color.black.opacity(0.7), radius: 10, x: 5, y: 5)
-
     }
 }
 

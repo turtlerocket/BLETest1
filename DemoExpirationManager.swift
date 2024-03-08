@@ -123,10 +123,10 @@ class DemoExpirationManager {
         let isExpired = isDemoPeriodExpired()
         
         if hasValidSubscription() {
-            return ("Your subscription is active. Enjoy the full version!", expirationDate, isExpired)
+            return ("Your subscription is currently active. Enjoy SimpleSpin! If you wish to manage your subscription settings or cancel auto-renewal, you can do so at any time.", expirationDate, isExpired)
         } else {
             if isExpired {
-                return ("Your demo period has expired on \(expirationDate). Please subscribe to unlock full features.", expirationDate, isExpired)
+                return ("Your demo period expired on \(expirationDate). Please subscribe to unlock full features.", expirationDate, isExpired)
             } else {
                 return ("You are currently in the demo period until \(expirationDate). Enjoy using the app!", expirationDate, isExpired)
             }
