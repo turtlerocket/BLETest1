@@ -62,10 +62,11 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     
-    // TODO: Need to put a better lessage for Loading Screen when trying to connect to echelon bike.  When Scanning for bike, be sure that users know to disconnect other devices from bike and that the bike is on if an error happens
     
     init() {
-        //    KeychainService.shared.deleteValue(forKey: "SubscriptionExpiration")
+        
+     //       KeychainService.shared.deleteValue(forKey: "SubscriptionExpiration")
+      
         bikeModel.connectDevice()
         
         // Simulate ALREADY subscribed - comment out for production depoyment

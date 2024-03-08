@@ -142,7 +142,14 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
             debugPrint("Receipt receiptData: \(receiptData)")
             
             // Send the receipt data to Apple's validation server
-            let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt" // or "https://buy.itunes.apple.com/verifyReceipt" for production
+            // Switch between sandbox and production URLs based on build configuration
+#if DEBUG
+            let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt"
+#else
+            let validationURLString = "https://buy.itunes.apple.com/verifyReceipt"
+#endif
+            
+            //            let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt" // or "https://buy.itunes.apple.com/verifyReceipt" for production
             guard let validationURL = URL(string: validationURLString) else {
                 print("Invalid validation URL")
                 completion(false)

@@ -25,10 +25,14 @@ class DemoExpirationViewModel: ObservableObject {
         self.message = message
         self.demoExpirationDate = expirationDate
         self.isDemoExpired = isExpired
-        
+    
+        #if DEBUG
         print("Message updated: \(message)")
          print("Demo expiration date updated: \(expirationDate)")
          print("Demo expired flag updated: \(isExpired)")
+        #else
+        // do nothing if in production
+        #endif
         
         // HACK: check if DemoExpirationManager is subscribed, if yes, stop the demo expiration check
         if (DemoExpirationManager.shared.isSubscribed) {
