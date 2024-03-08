@@ -59,50 +59,61 @@ struct SettingsView: View {
             .scrollContentBackground(.hidden)
             .background(Color.black)
             
-           
+   
+      
             Text(errorMessage)
                 .foregroundColor(.red)
             
           
-            
-            HStack {
+            VStack {
                 Spacer()
-                
-                Button("Cancel") {
-                    isVisible = false
-                }
-                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
-                
-               
-                
-                Button("Save") {
-                    // Accessing the shared instance of ConfigurationManager
-                    let configMgr = ConfigurationManager.shared
+                HStack {
+                    Spacer()
                     
-                    // Check the distance format
-                    if selectedDistanceUnit == "km" {
-                        configMgr.isKMUnit = true
-                        viewModel.isKMUnit = true
-                    } else if selectedDistanceUnit == "mi" {
-                        configMgr.isKMUnit = false
-                        viewModel.isKMUnit = false
+                    Button("Cancel") {
+                        isVisible = false
                     }
+                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                     
-                    // Save sleep time setting
-                    configMgr.sleepTime = selectedSleepTime
-                    viewModel.sleepTime = selectedSleepTime
                     
-                    configMgr.saveChanges()
                     
-                    isVisible = false
+                    Button("Save") {
+                        // Accessing the shared instance of ConfigurationManager
+                        let configMgr = ConfigurationManager.shared
+                        
+                        // Check the distance format
+                        if selectedDistanceUnit == "km" {
+                            configMgr.isKMUnit = true
+                            viewModel.isKMUnit = true
+                        } else if selectedDistanceUnit == "mi" {
+                            configMgr.isKMUnit = false
+                            viewModel.isKMUnit = false
+                        }
+                        
+                        // Save sleep time setting
+                        configMgr.sleepTime = selectedSleepTime
+                        viewModel.sleepTime = selectedSleepTime
+                        
+                        configMgr.saveChanges()
+                        
+                        isVisible = false
+                    }
+                    .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
+                    
+                    Spacer()
                 }
-                .buttonStyle(NeomorphicButtonStyle(buttonColor: Color.white, fontColor: Color.black))
                 
-                Spacer()
+                .background(Color.black)
+                .padding(.horizontal)
+                
+            Spacer()
             }
-            .background(Color.black)
-            .padding(.horizontal)
-            .padding(.bottom)
+         
+            
+            Text("We'd love your feedback! For feature requests, bug reports, or compatibility with different Echelon bikes, reach out to us at contact@simplespinapp.com. Your input matters!")
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .padding(.bottom)
             
             // If active subscription, there should be a message that your subscription auto-renews on given date and provide
             // a Unsubscribe button.

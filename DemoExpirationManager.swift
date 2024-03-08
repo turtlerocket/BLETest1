@@ -103,7 +103,7 @@ class DemoExpirationManager {
         
         let currentDate = Date()
         let calendar = Calendar.current
-        let expirationDate = calendar.date(byAdding: .day, value: 3, to: installationDate) // Adjusted to 3 days for demo
+        let expirationDate = calendar.date(byAdding: .day, value: 3, to: installationDate) // 3 Day expire for demo
         
         if let expirationDate = expirationDate {
             return currentDate >= expirationDate

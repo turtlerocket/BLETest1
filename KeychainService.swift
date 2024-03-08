@@ -40,8 +40,11 @@ class KeychainService {
     
     private func updateSubscriptionExpiration() {
        
-        //        let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
-        let newExpirationDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
+        // Default subscription duration is 30 days; used to check subscription expiration date without going to server
+        let newExpirationDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+      
+        // For debugging, set expiration of subscription to 5 minutes
+//        let newExpirationDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date()) ?? Date()
 
         print("Subscription renewed for another round with new expiration date: \(newExpirationDate)")
         
