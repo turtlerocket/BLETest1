@@ -123,7 +123,13 @@ class DemoExpirationManager {
         // Set demo expiration to 7 days to allow time for use and testing with exercise bike
         let currentDate = Date()
         let calendar = Calendar.current
+
+        // If debug, demo expires in 5 minutes.  Production, 7 days
+        #if DEBUG
+        let expirationDate = calendar.date(byAdding: .minute, value: 5, to: demoStartDate) // 5 minutes to expire for demo
+        #else
         let expirationDate = calendar.date(byAdding: .day, value: 7, to: demoStartDate) // 7 Day expire for demo
+        #endif
         
         if let expirationDate = expirationDate {
             return currentDate >= expirationDate
