@@ -46,7 +46,7 @@ class SimulatedExpirationManager {
 
 
     private let installationDateKey = "InstallationDate"
-    
+    private let demoStartDateKey = "demoStartDateKey"
 
 
     

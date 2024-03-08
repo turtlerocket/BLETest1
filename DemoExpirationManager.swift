@@ -32,7 +32,7 @@ class DemoExpirationViewModel: ObservableObject {
         
         // HACK: check if DemoExpirationManager is subscribed, if yes, stop the demo expiration check
         if (DemoExpirationManager.shared.isSubscribed) {
-            print("Noticed user is subribed.  Stop further demo expiration checks")
+            print("Noticed user is subscribed.  Stop further demo expiration checks")
             self.isSubscribed = true
             startOrStopTimer()
         }
@@ -62,12 +62,24 @@ import Foundation
 class DemoExpirationManager {
 //    static let shared = DemoExpirationManager()
 //    static let shared = DemoExpirationManager(isSubscribed: true)
+    
     static let shared = DemoExpirationManager(isSubscribed: false)
 
-
     private let installationDateKey = "InstallationDate"
+    private let demoStartDateKey = "demoStartDateKey"
+
     
-    var installationDate: Date? {
+    private var demoStartDate: Date? {
+        get {
+            return retrieveDemoStartDate()
+        }
+        set {
+            saveDemoStartDate(newValue) // newValue is automatically provided by Swift
+        }
+    }
+    
+    // Set the installation date once - note that the Keychain does not disappear unless the app removes it
+    private var installDate: Date? {
         get {
             if let loadedDate = KeychainService.shared.loadDate(forKey: installationDateKey) {
                 return loadedDate
@@ -90,20 +102,24 @@ class DemoExpirationManager {
     
     init(isSubscribed: Bool = false) {
         self.isSubscribed = isSubscribed
+
     }
     
     func setInstallationDateIfNeeded() {
-        _ = installationDate
+        _ = demoStartDate
     }
     
     func isDemoPeriodExpired() -> Bool {
-        guard let installationDate = installationDate else {
+        
+        // If installation date is set,
+        guard let demoStartDate = demoStartDate else {
             return true
         }
-        
+       
+        // Set demo expiration to 7 days to allow time for use and testing with exercise bike
         let currentDate = Date()
         let calendar = Calendar.current
-        let expirationDate = calendar.date(byAdding: .day, value: 3, to: installationDate) // 3 Day expire for demo
+        let expirationDate = calendar.date(byAdding: .day, value: 7, to: demoStartDate) // 7 Day expire for demo
         
         if let expirationDate = expirationDate {
             return currentDate >= expirationDate
@@ -123,6 +139,11 @@ class DemoExpirationManager {
         let isExpired = isDemoPeriodExpired()
         
         if hasValidSubscription() {
+            // If the subscription is active, delete the demo start date
+            // TODO: This really should be only called once when subscription is started
+           print("Demo start date REMOVED because SUBSCRIBED")
+            KeychainService.shared.deleteValue(forKey: demoStartDateKey)
+            
             return ("Your subscription is currently active. Enjoy SimpleSpin! If you wish to manage your subscription settings or cancel auto-renewal, you can do so at any time.", expirationDate, isExpired)
         } else {
             if isExpired {
@@ -134,14 +155,34 @@ class DemoExpirationManager {
     }
     
     func demoExpirationDate() -> String {
-        guard let installationDate = installationDate else {
+        guard let demoStartDate = demoStartDate else {
             return "N/A"
         }
         
-        let expirationDate = Calendar.current.date(byAdding: .day, value: 3, to: installationDate) ?? installationDate
+        // Check the demo expiration date to be 7 days after demo start date
+        let expirationDate = Calendar.current.date(byAdding: .day, value: 7, to: demoStartDate) ?? demoStartDate
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM dd, yyyy HH:mm"
         
         return dateFormatter.string(from: expirationDate)
+    }
+    
+    
+    private func retrieveDemoStartDate() -> Date? {
+        if let loadedDate = KeychainService.shared.loadDate(forKey: demoStartDateKey) {
+            return loadedDate
+        } else {
+            let currentDate = Date()
+            saveDemoStartDate(currentDate)
+            return currentDate
+        }
+    }
+
+    private func saveDemoStartDate(_ date: Date?) {
+        if let newValue = date {
+            KeychainService.shared.saveDate(value: newValue, forKey: demoStartDateKey)
+        } else {
+            KeychainService.shared.deleteValue(forKey: demoStartDateKey)
+        }
     }
 }
