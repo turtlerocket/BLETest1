@@ -42,7 +42,7 @@ import Foundation
 class SimulatedExpirationManager {
 //    static let shared = DemoExpirationManager()
 //    static let shared = DemoExpirationManager(isSubscribed: true)
-    static let shared = SimulatedExpirationManager()
+//    static let shared = SimulatedExpirationManager()
 
 
     private let installationDateKey = "InstallationDate"
@@ -61,6 +61,11 @@ return false
     func hasValidSubscription() -> Bool {
         // Your subscription validation logic
         return isSubscribed
+    }
+    
+    func getMessageAndExpirationDate() -> (String, String, Bool) {        
+        return ("Your SIMULATED subscription is currently active. Enjoy SimpleSpin!", "No Expiration", false)
+
     }
     
     

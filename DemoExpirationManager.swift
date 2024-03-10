@@ -67,7 +67,9 @@ class DemoExpirationManager {
 //    static let shared = DemoExpirationManager()
 //    static let shared = DemoExpirationManager(isSubscribed: true)
     
+    // Change to SimulatedExpirationManager for no demo expire and active subscription
     static let shared = DemoExpirationManager(isSubscribed: false)
+//    static let shared = SimulatedExpirationManager()
 
     private let installationDateKey = "InstallationDate"
     private let demoStartDateKey = "demoStartDateKey"
