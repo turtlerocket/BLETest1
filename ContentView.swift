@@ -37,7 +37,7 @@ struct ContentView: View {
   //  @ObservedObject var bikeModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
-//     @ObservedObject var demoModel = SimulatedExpirationModel()
+ //    @ObservedObject var demoModel = SimulatedExpirationModel()
 
     @ObservedObject var demoModel = DemoExpirationViewModel()
  
@@ -482,7 +482,7 @@ struct NeomorphicTable: View {
                 HStack {
                     HeaderCell(text: "Timer")
                     HeaderCell(text: "Distance")
-                    HeaderCell(text: "Total Power")
+                    HeaderCell(text: "Avg Power")
                     HeaderCell(text: "Cadence")
                     HeaderCell(text: "Level")
                     
@@ -497,7 +497,7 @@ struct NeomorphicTable: View {
                     TableCell(text: String(format: "%.2f \(viewModel.isKMUnit ? "km" : "mi")", convertDistance(viewModel.exerciseData.totalDistance)), alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
-                    TableCell(text: String(format: "%.2f watt", viewModel.exerciseData.totalPower), alignment: .center)
+                    TableCell(text: String(format: "%.0f watt", viewModel.exerciseData.avgPower), alignment: .center)
                         .padding(.vertical, 1)
                         .neumorphicStyle()
                     TableCell(text: "\(Int(viewModel.exerciseData.cadence)) rpm", alignment: .center)

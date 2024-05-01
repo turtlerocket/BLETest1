@@ -7,7 +7,8 @@ struct ExerciseBikeData {
     var cadence: Double
     var resistance: Double
     var currentPower: Double
-    var totalPower: Double
+    var avgPower: Double
+ //   var totalPower: Double
     var totalDistance: Double
     var elapsedTime: TimeInterval // Elapsed time in seconds
     
@@ -30,7 +31,7 @@ struct ExerciseBikeData {
         self.cadence = 0
         self.resistance = 0
         self.currentPower = 0
-        self.totalPower = 0
+        self.avgPower = 0
         self.totalDistance = 0
         self.elapsedTime = 0
         self.maximumCadence = 0
@@ -135,9 +136,12 @@ class ExerciseBike: ObservableObject {
             let elapsedTime = currentTime.timeIntervalSince(startTime)
 
             // TODO: Fix bug when app is running background, but the total power and distance odes not accumulate
-            // Update total power and total distance only every second
+            // Update total power and average power ONLY every second
             if Int(elapsedTime) % 1 == 0 {
-                self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt/second
+         //       self.exerciseData.totalPower +=  self.exerciseData.currentPower  / 3600 // Power is in Watt/second
+                self.exerciseData.avgPower =  self.exerciseData.avgPower + ((self.exerciseData.currentPower - self.exerciseData.avgPower) / elapsedTime)
+                
+                                                                
                 self.exerciseData.totalDistance += self.exerciseData.speed / 3600 // Distance is in units per second (e.g., kmeters/second)
                 
                 // Update elapsed time
@@ -161,7 +165,8 @@ class ExerciseBike: ObservableObject {
         stopTimer()
         exerciseData.elapsedTime = 0
         exerciseData.totalDistance = 0
-        exerciseData.totalPower = 0
+   //     exercisdeData.totalPower = 0
+        exerciseData.avgPower = 0
         exerciseData.maximumCadence = 0
         exerciseData.maximumSpeed = 0
         exerciseData.maximumPower = 0
