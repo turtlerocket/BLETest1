@@ -17,6 +17,7 @@
 		60941B182B86CB71008CBB28 /* DemoExpirationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */; };
 		60941B1A2B86CBA5008CBB28 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B192B86CBA5008CBB28 /* KeychainService.swift */; };
 		60941B1C2B86FC5B008CBB28 /* SubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */; };
+		609668392BEAE7890020C67E /* ExpirationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609668382BEAE7890020C67E /* ExpirationManager.swift */; };
 		60B72D792B7EDAC90020EAF6 /* EchelonBike.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */; };
 		60B72D832B81A2160020EAF6 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */; };
 		60B72D892B81C9260020EAF6 /* EchelonBluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */; };
@@ -59,6 +60,7 @@
 		60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoExpirationManager.swift; sourceTree = "<group>"; };
 		60941B192B86CBA5008CBB28 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
+		609668382BEAE7890020C67E /* ExpirationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpirationManager.swift; sourceTree = "<group>"; };
 		60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBike.swift; sourceTree = "<group>"; };
 		60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBluetoothManager.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */,
 				60941B192B86CBA5008CBB28 /* KeychainService.swift */,
 				60941B172B86CB71008CBB28 /* DemoExpirationManager.swift */,
+				609668382BEAE7890020C67E /* ExpirationManager.swift */,
 				601F2B0E2B91A0970097B4AC /* SimulatedExpirationManager.swift */,
 				607DCBFC2B845536001D8637 /* SleepingBike.swift */,
 				60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */,
@@ -312,6 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				609668392BEAE7890020C67E /* ExpirationManager.swift in Sources */,
 				601F2B0F2B91A0970097B4AC /* SimulatedExpirationManager.swift in Sources */,
 				60448CD62B783E8100F5C853 /* ExerciseBike.swift in Sources */,
 				60941B1C2B86FC5B008CBB28 /* SubscriptionView.swift in Sources */,

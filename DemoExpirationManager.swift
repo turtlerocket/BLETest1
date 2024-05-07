@@ -35,7 +35,7 @@ class DemoExpirationViewModel: ObservableObject {
         #endif
         
         // HACK: check if DemoExpirationManager is subscribed, if yes, stop the demo expiration check
-        if (DemoExpirationManager.shared.isSubscribed) {
+        if (DemoExpirationManager.shared.hasValidSubscription()) {
             print("Noticed user is subscribed.  Stop further demo expiration checks")
             self.isSubscribed = true
             startOrStopTimer()
@@ -63,14 +63,18 @@ class DemoExpirationViewModel: ObservableObject {
 
 import Foundation
 
-class DemoExpirationManager {
-//    static let shared = DemoExpirationManager()
+class DemoExpirationManager: ExpirationManager {
+    
+   
+    //    static let shared = DemoExpirationManager()
 //    static let shared = DemoExpirationManager(isSubscribed: true)
     
     // Change to SimulatedExpirationManager for no demo expire and active subscription
-    static let shared = DemoExpirationManager(isSubscribed: false)
+//    static let shared = DemoExpirationManager(isSubscribed: false)
 //    static let shared = SimulatedExpirationManager()
 
+    private var isSubscribed: Bool
+    
     private let installationDateKey = "InstallationDate"
     private let demoStartDateKey = "demoStartDateKey"
 
@@ -103,19 +107,18 @@ class DemoExpirationManager {
             }
         }
     }
+ 
     
-    public var isSubscribed: Bool
-    
-    init(isSubscribed: Bool = false) {
+    override init(isSubscribed: Bool = false) {
         self.isSubscribed = isSubscribed
 
     }
     
-    func setInstallationDateIfNeeded() {
+    override func setInstallationDateIfNeeded() {
         _ = demoStartDate
     }
     
-    func isDemoPeriodExpired() -> Bool {
+    override func isDemoPeriodExpired() -> Bool {
         
         // If installation date is set,
         guard let demoStartDate = demoStartDate else {
@@ -139,14 +142,17 @@ class DemoExpirationManager {
             return true
         }
     }
+    override func setSubscription(isSubscribed: Bool = false) {
+        self.isSubscribed = isSubscribed
+    }
     
-    func hasValidSubscription() -> Bool {
+    override func hasValidSubscription() -> Bool {
         // Your subscription validation logic
         return isSubscribed
     }
     
     
-    func getMessageAndExpirationDate() -> (String, String, Bool) {
+    override func getMessageAndExpirationDate() -> (String, String, Bool) {
         let expirationDate = demoExpirationDate()
         let isExpired = isDemoPeriodExpired()
         
@@ -166,7 +172,7 @@ class DemoExpirationManager {
         }
     }
     
-    func demoExpirationDate() -> String {
+    override func demoExpirationDate() -> String {
         guard let demoStartDate = demoStartDate else {
             return "N/A"
         }

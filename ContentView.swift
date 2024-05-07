@@ -92,8 +92,8 @@ struct ContentView: View {
                     SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                     
                     
-                    if !DemoExpirationManager.shared.isSubscribed{
-                        //       if !SimulatedExpirationManager.shared.isSubscribed{
+                    if !ExpirationManager.shared.hasValidSubscription(){
+                        //       if !SimulatedExpirationManager.shared.hasValidSubscription{
                     
                         HStack {
                             Text("Expires on \(demoModel.demoExpirationDate)")
@@ -199,7 +199,7 @@ struct ContentView: View {
                         
                         SpeedPowerToggle(isSpeedDisplayed: $isSpeedDisplayed)
                         
-                        if !DemoExpirationManager.shared.isSubscribed {
+                        if !ExpirationManager.shared.hasValidSubscription() {
                  
                       // if !SimulatedExpirationManager.shared.isSubscribed {
                            
@@ -297,13 +297,13 @@ struct ContentView: View {
         .onChange(of: demoModel.isDemoExpired) { newValue in
             print("DEMO IS EXPIRED")
       
-   //         if newValue && !DemoExpirationManager.shared.isSubscribed {
-            if newValue && !SimulatedExpirationManager.shared.isSubscribed {
+   //         if newValue && !DemoExpirationManager.shared.hasValidSubscription {
+            if newValue && !ExpirationManager.shared.isSubscribed {
                 print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
                 isSubscriptionViewVisible = true
             }
         }
-        .onChange(of: DemoExpirationManager.shared.isSubscribed) { newValue in
+        .onChange(of: ExpirationManager.shared.hasValidSubscription()) { newValue in
             // Force refresh of view when subscription changes
             if newValue {
                 print("YOU ARE SUBSCRIBED Flag")

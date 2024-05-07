@@ -55,7 +55,7 @@ class KeychainService {
         print("Subscription renewed for another round with new expiration date: \(newExpirationDate)")
         
         // Set the global variable of subscription to TRUE
-        DemoExpirationManager.shared.isSubscribed = true
+        ExpirationManager.shared.setSubscription(isSubscribed: true)
         
         saveDate(value: newExpirationDate, forKey: "SubscriptionExpiration")
 
@@ -85,7 +85,7 @@ class KeychainService {
             print("Still subscribed based on expiration date: \(expirationDate)")
             
             // TODO: Hack - need to extract all subscription activity to a SubscriptionManager...  this flag controls message of demo expiration
-            DemoExpirationManager.shared.isSubscribed = true
+            ExpirationManager.shared.setSubscription(isSubscribed: true)
         }
     }
 

@@ -109,7 +109,7 @@ struct SubscriptionView: View {
                 // Transaction was successful, update subscription status or notify other managers/services
                 
                 // For example, if DemoExpirationManager is ObservableObject
-                DemoExpirationManager.shared.isSubscribed = true
+                ExpirationManager.shared.setSubscription(isSubscribed: true)
                 
                 // Store isSubscribed with KeychainService
                 KeychainService.shared.setIsSubscribed(true)

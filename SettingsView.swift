@@ -118,9 +118,9 @@ struct SettingsView: View {
             // If active subscription, there should be a message that your subscription auto-renews on given date and provide
             // a Unsubscribe button.
             // IF no active subscription, indicate expiration date
-            let (message, _, _) = DemoExpirationManager.shared.getMessageAndExpirationDate()
+            let (message, _, _) = ExpirationManager.shared.getMessageAndExpirationDate()
             
-            if DemoExpirationManager.shared.hasValidSubscription() {
+            if ExpirationManager.shared.hasValidSubscription() {
                 HStack {
                     Text(message)
                         .foregroundColor(.white)
