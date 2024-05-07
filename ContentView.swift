@@ -37,9 +37,9 @@ struct ContentView: View {
   //  @ObservedObject var bikeModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
- //    @ObservedObject var demoModel = SimulatedExpirationModel()
+     @ObservedObject var demoModel = SimulatedExpirationModel()
 
-    @ObservedObject var demoModel = DemoExpirationViewModel()
+ //   @ObservedObject var demoModel = DemoExpirationViewModel()
  
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
@@ -93,7 +93,7 @@ struct ContentView: View {
                     
                     
                     if !DemoExpirationManager.shared.isSubscribed{
-                     //           if !SimulatedExpirationManager.shared.isSubscribed{
+                        //       if !SimulatedExpirationManager.shared.isSubscribed{
                     
                         HStack {
                             Text("Expires on \(demoModel.demoExpirationDate)")
@@ -201,7 +201,7 @@ struct ContentView: View {
                         
                         if !DemoExpirationManager.shared.isSubscribed {
                  
-                 //       if !SimulatedExpirationManager.shared.isSubscribed {
+                      // if !SimulatedExpirationManager.shared.isSubscribed {
                            
                             HStack {
                                 Text("Expires on \(demoModel.demoExpirationDate)")
@@ -297,8 +297,8 @@ struct ContentView: View {
         .onChange(of: demoModel.isDemoExpired) { newValue in
             print("DEMO IS EXPIRED")
       
-            if newValue && !DemoExpirationManager.shared.isSubscribed {
-   //         if newValue && !SimulatedExpirationManager.shared.isSubscribed {
+   //         if newValue && !DemoExpirationManager.shared.isSubscribed {
+            if newValue && !SimulatedExpirationManager.shared.isSubscribed {
                 print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
                 isSubscriptionViewVisible = true
             }

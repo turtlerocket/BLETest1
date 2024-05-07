@@ -42,7 +42,7 @@ import Foundation
 class SimulatedExpirationManager {
 //    static let shared = DemoExpirationManager()
 //    static let shared = DemoExpirationManager(isSubscribed: true)
-//    static let shared = SimulatedExpirationManager()
+   static let shared = SimulatedExpirationManager()
 
 
     private let installationDateKey = "InstallationDate"
