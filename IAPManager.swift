@@ -141,13 +141,13 @@ class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObser
             
             // Send the receipt data to Apple's validation server
             // Switch between sandbox and production URLs based on build configuration
-#if DEBUG
-            debugPrint("DEBUG MODE")
+#if DEBUG || SANDBOX
+            debugPrint("IAPManager:  DEBUG or SANDBOX")
             debugPrint("Receipt receiptData: \(receiptData)")
             
             let validationURLString = "https://sandbox.itunes.apple.com/verifyReceipt"
 #else
-            debugPrint("PRODUCTION MODE")
+            debugPrint("IAPManager: PRODUCTION MODE")
             let validationURLString = "https://buy.itunes.apple.com/verifyReceipt"
 #endif
             

@@ -131,6 +131,7 @@ class DemoExpirationManager: ExpirationManager {
 
         // If debug, demo expires in 5 minutes.  Production, 7 days
         #if SANDBOX
+        debugPrint("DemoExpirationManager:  SANDBOX")
         let expirationDate = calendar.date(byAdding: .minute, value: 5, to: demoStartDate) // 5 minutes to expire for demo
         #else
         let expirationDate = calendar.date(byAdding: .day, value: 7, to: demoStartDate) // 7 Day expire for demo

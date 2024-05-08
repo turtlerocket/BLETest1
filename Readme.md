@@ -33,8 +33,8 @@ The app contains several build settings for evaluation purposes:
    - It is designed for development and testing purposes only.  
 
 3. **SANDBOX**:
-   - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period. Trial period for mobile app expires in 5 minutes (Release production expires in 7 days)
-
+   - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period. Trial period for mobile app expires in 5 minutes (Release production expires in 7 days).  Subscription expires 15 minutes in Keychain (we reduce server checks for expired subscription by going to Keychain first; note that production release is 30 days for subscription)
+   
 ### Instructions to Access Build Settings
 
 1. Open the project in Xcode.
