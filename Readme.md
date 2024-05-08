@@ -18,9 +18,11 @@
 
 4. **DEBUG Mode**: Enables running the mobile app without a valid license and with no expiration.
 
+5. **SANDBOX Mode**: Tests subscription functionality using the App Store sandbox environment.
+
 ## Build Settings
 
-The app contains two build settings for evaluation purposes:
+The app contains several build settings for evaluation purposes:
 
 1. **DEMO**: 
    - This mode allows you to simulate bike metrics without connecting to an actual exercise bike. 
@@ -30,12 +32,16 @@ The app contains two build settings for evaluation purposes:
    - This mode allows the app to run without a valid license and has no expiration period. 
    - It is designed for development and testing purposes only.
 
+3. **SANDBOX**:
+   - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period.
+
 ### Instructions to Access Build Settings
 
 1. Open the project in Xcode.
 2. In the "Scheme" dropdown menu, choose the appropriate configuration:
-   - **DEMO**: Select the "DEMO" scheme to activate the simulation mode.
-   - **DEBUG**: Select the "DEBUG" scheme to bypass license verification.
+   - **DEMO**: Select the "DEMO" scheme to activate the simulation mode.  No subscription required.
+   - **DEBUG**: Select the "DEBUG" scheme to bypass license verification. 
+   - **SANDBOX**: Select the "SANDBOX" scheme to test subscriptions in the App Store sandbox environment. 
 
 ### Testing Guidelines
 
@@ -49,6 +55,9 @@ The app contains two build settings for evaluation purposes:
 
 3. **License Verification (DEBUG Mode)**:
    - Verify that the app bypasses license verification and operates without expiration.
+
+4. **Subscription Testing (SANDBOX Mode)**:
+   - Use test Apple IDs to verify subscription purchase, renewal, and cancellation in the App Store sandbox environment.
 
 ## Conclusion
 
