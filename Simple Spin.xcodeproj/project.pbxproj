@@ -61,6 +61,7 @@
 		60941B192B86CBA5008CBB28 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		60941B1B2B86FC5B008CBB28 /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionView.swift; sourceTree = "<group>"; };
 		609668382BEAE7890020C67E /* ExpirationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpirationManager.swift; sourceTree = "<group>"; };
+		6096683A2BEBE84D0020C67E /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBike.swift; sourceTree = "<group>"; };
 		60B72D822B81A2160020EAF6 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		60B72D882B81C9260020EAF6 /* EchelonBluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchelonBluetoothManager.swift; sourceTree = "<group>"; };
@@ -115,6 +116,7 @@
 		60FC63D52B781CBF00A43B12 = {
 			isa = PBXGroup;
 			children = (
+				6096683A2BEBE84D0020C67E /* Readme.md */,
 				601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */,
 				60214E442B8E879800BDC3DE /* IAPManager.swift */,
 				60B72D782B7EDAC90020EAF6 /* EchelonBike.swift */,
