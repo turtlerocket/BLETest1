@@ -511,7 +511,6 @@
 		};
 		6096683F2BEBECB80020C67E /* SANDBOX */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -575,7 +574,6 @@
 		};
 		609668402BEBECB80020C67E /* SANDBOX */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -617,7 +615,6 @@
 		};
 		609668412BEBECB80020C67E /* SANDBOX */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -637,7 +634,6 @@
 		};
 		609668422BEBECB80020C67E /* SANDBOX */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -655,7 +651,6 @@
 		};
 		60FC64002B781CC200A43B12 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -775,7 +770,6 @@
 		};
 		60FC64032B781CC200A43B12 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -858,7 +852,6 @@
 		};
 		60FC64062B781CC200A43B12 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -897,7 +890,6 @@
 		};
 		60FC64092B781CC200A43B12 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 601F2B092B8FBE690097B4AC /* SimulatedStoreKit.storekit */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

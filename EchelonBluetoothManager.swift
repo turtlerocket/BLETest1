@@ -177,7 +177,9 @@ class EchelonBluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralD
                     debugPrint("Error: Invalid data length for Cadence message")
                 }
             } else if notificationType == 0xD2 {  // Resistance notification
+                #if DEBUG || SANDBOX
                 debugPrint("Resistance message: \(characteristic): \(data) : \(notificationType)")
+                #endif
                 if data.count >= 4 {
                     viewModel.isLoading = false
                     viewModel.exerciseData.resistance = Double(data[3])
