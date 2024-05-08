@@ -30,10 +30,10 @@ The app contains several build settings for evaluation purposes:
 
 2. **DEBUG**: 
    - This mode allows the app to run without a valid license and has no expiration period. 
-   - It is designed for development and testing purposes only.
+   - It is designed for development and testing purposes only.  
 
 3. **SANDBOX**:
-   - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period.
+   - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period. Trial period for mobile app expires in 5 minutes (Release production expires in 7 days)
 
 ### Instructions to Access Build Settings
 

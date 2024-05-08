@@ -31,10 +31,12 @@ var metricSize: Int = MetricSize.medium
 // Main ContentView
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
-    // TODO: Refactor ExerciseBike and SimulatedExerciseBike to have same Bike super-class
-           @ObservedObject var bikeModel = EchelonBike()
-//    @ObservedObject var bikeModel = SimulatedExerciseBike()
-  //  @ObservedObject var bikeModel = SleepingBike()
+    #if DEMO
+    @ObservedObject var bikeModel = SimulatedExerciseBike()
+    #else
+    @ObservedObject var bikeModel = EchelonBike()
+    #endif
+    //  @ObservedObject var bikeModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
      @ObservedObject var demoModel = SimulatedExpirationModel()
@@ -298,7 +300,7 @@ struct ContentView: View {
             print("DEMO IS EXPIRED")
       
    //         if newValue && !DemoExpirationManager.shared.hasValidSubscription {
-            if newValue && !ExpirationManager.shared.isSubscribed {
+            if newValue && !ExpirationManager.shared.hasValidSubscription() {
                 print("Discovered that the Demo is EXPIRED and there is no valid subscription. Forcing subscription screen")
                 isSubscriptionViewVisible = true
             }
