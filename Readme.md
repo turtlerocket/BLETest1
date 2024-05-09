@@ -25,17 +25,19 @@
 The app contains several build settings for evaluation purposes:
 
 1. **DEMO**: 
-   - This mode allows you to simulate bike metrics without connecting to an actual exercise bike. 
+   - This mode allows you to simulate bike metrics without connecting to an actual exercise bike.  There is no trial period or subscription required.
    - It is useful for testing the dashboard UI and user experience.
 
 2. **DEBUG**: 
    - This mode allows the app to run without a valid license and has no expiration period. 
+   - This requires a bluetooth enabled bike (currently tested on an Echelon 4s spin bike)
    - It is designed for development and testing purposes only.  
 
 3. **SANDBOX**:
    - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period. Trial period for mobile app expires in 5 minutes (Release production expires in 7 days).  Subscription expires 15 minutes in Keychain (we reduce server checks for expired subscription by going to Keychain first; note that production release is 30 days for subscription)
    - Create a new test users for testing trial period expriation date.  Once expired, the user must subscribe to a subscription.  Otherwise, the user has no access.
 4. **Simple Spin**
+    - Product release of software which requires a functioning bluetooth enabled bike (currently tested on an Echelon 4s bike)
     - This is the Release version of the mobile app build with Trial period set to 7 days and Subscription expires in 30 days both in Keychain and Storekit.
    
 ### Instructions to Access Build Settings
@@ -68,3 +70,7 @@ Simple Spin simplifies your workout sessions by providing a reliable and easy-to
 
 **Contact Information**  
 For support or additional information, contact us at [contact@simplespinapp.com].
+
+
+Sandbox Test Users
+benjamindai+5@gmail.com - Potato123!
