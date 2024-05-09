@@ -65,14 +65,6 @@ import Foundation
 
 class DemoExpirationManager: ExpirationManager {
     
-   
-    //    static let shared = DemoExpirationManager()
-//    static let shared = DemoExpirationManager(isSubscribed: true)
-    
-    // Change to SimulatedExpirationManager for no demo expire and active subscription
-//    static let shared = DemoExpirationManager(isSubscribed: false)
-//    static let shared = SimulatedExpirationManager()
-
     private var isSubscribed: Bool
     
     private let installationDateKey = "InstallationDate"
@@ -120,7 +112,7 @@ class DemoExpirationManager: ExpirationManager {
     
     override func isDemoPeriodExpired() -> Bool {
         
-        // If installation date is set,
+        // If installation date is found, continue with code check of expiration; otherwise EXPIRED (there should always be trial start date
         guard let demoStartDate = demoStartDate else {
             return true
         }
@@ -131,11 +123,9 @@ class DemoExpirationManager: ExpirationManager {
 
         // If debug, demo expires in 5 minutes.  Production, 7 days
         #if SANDBOX
-        debugPrint("DemoExpirationManager:  SANDBOX - 5 minute demo expiration (vs 7 days)")
+        debugPrint("SANDBOX - Checking if 5 minute trial period expired (Release trial expiration is 7 days); current date: \(currentDate)")
         let expirationDate = calendar.date(byAdding: .minute, value: 5, to: demoStartDate) // 5 minutes to expire for demo
         #else
-        
-        debugPrint("TRIAL period expires in 7 days)")
         let expirationDate = calendar.date(byAdding: .day, value: 7, to: demoStartDate) // 7 Day expire for demo
         #endif
         
@@ -195,6 +185,12 @@ class DemoExpirationManager: ExpirationManager {
         } else {
             let currentDate = Date()
             saveDemoStartDate(currentDate)
+            
+#if SANDBOX
+print("No trial start date found; Creating new ONE date: \(currentDate)")
+#endif
+            
+            
             return currentDate
         }
     }
