@@ -39,10 +39,14 @@ struct ContentView: View {
     //  @ObservedObject var bikeModel = SleepingBike()
 
     // You also need to change DemoExpirationViewModel to SimualtedExpiratonModel everywhere in this file
-     @ObservedObject var demoModel = SimulatedExpirationModel()
+    
 
- //   @ObservedObject var demoModel = DemoExpirationViewModel()
- 
+    #if DEBUG || DEMO
+    @ObservedObject var demoModel = SimulatedExpirationModel()
+    #else
+    @ObservedObject var demoModel = DemoExpirationViewModel()   // Real expiration model
+    #endif
+    
     @State private var isSpeedDisplayed = true // Toggle between speed and power
     
     // Defines how long before last state change - if more than 10 minutes, sleep screen

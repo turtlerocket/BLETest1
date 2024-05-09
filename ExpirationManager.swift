@@ -12,10 +12,10 @@ class ExpirationManager {
 //    static let shared = DemoExpirationManager(isSubscribed: true)
     
     // Change to SimulatedExpirationManager for no demo expire and active subscription
-    #if SANDBOX || DEMO
-    static let shared = SimulatedExpirationManager()
+    #if DEBUG || DEMO
+    static let shared = SimulatedExpirationManager()                    // Simulated to always be subscribed
     #else
-    static let shared = DemoExpirationManager(isSubscribed: false)
+    static let shared = DemoExpirationManager(isSubscribed: false)      // Real demo expiration manager
     #endif
     
     init(isSubscribed: Bool = false) {
