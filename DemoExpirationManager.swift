@@ -19,7 +19,7 @@ class DemoExpirationViewModel: ObservableObject {
         timer?.invalidate()
     }
     
-    // This method is called every 5 seconds to check expiration date of demo
+    // This method is called every 10 seconds to check expiration date of demo
     func updateMessage() {
         let (message, expirationDate, isExpired) = DemoExpirationManager.shared.getMessageAndExpirationDate()
         self.message = message
@@ -53,8 +53,8 @@ class DemoExpirationViewModel: ObservableObject {
             print("Stop periodic demo expired check because SUBSCRIBED.")
             timer?.invalidate()
         } else {
-            // Update message and status every 5 seconds
-            timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            // Update message and status every 10 seconds
+            timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
                 self?.updateMessage()
             }
         }

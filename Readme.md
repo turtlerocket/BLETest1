@@ -36,7 +36,7 @@ The app contains several build settings for evaluation purposes:
 3. **SANDBOX**:
    - Allows testing of subscriptions within the App Store sandbox environment using test Apple IDs.  This includes short subscription period. Trial period for mobile app expires in 5 minutes (Release production expires in 7 days).  Subscription expires 15 minutes in Keychain (we reduce server checks for expired subscription by going to Keychain first; note that production release is 30 days for subscription)
    - Requires a functioning bluetooth enabled bike (currently tested on an Echelon 4s bike)
-   - To test Trial expiration (5 minutes for SANDBOX), create a new test users.  Once expired, the user must subscribe to a subscription.  Otherwise, the user has no access.
+   - To test Trial expiration (5 minutes for SANDBOX), create a new test users.  Once expired, the user must subscribe to have a fully functional app.  Otherwise, the user has no access.
 4. **Simple Spin**
     - Product release of software which requires a functioning bluetooth enabled bike (currently tested on an Echelon 4s bike)
     - This is the Release version of the mobile app build with Trial period set to 7 days and Subscription expires in 30 days both in Keychain and Storekit.

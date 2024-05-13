@@ -16,7 +16,6 @@ class SimulatedExpirationModel: ObservableObject {
     
    
     init() {
-      
     }
     
     deinit {
@@ -53,6 +52,16 @@ class SimulatedExpirationManager: ExpirationManager {
     var isSubscribed: Bool = true
     
 
+    init() {
+        super.init()
+        
+        // If DEMO build, delete all the installation and demo start keys so that the next real build starts with clean-slate
+        #if DEMO
+        KeychainService.shared.deleteValue(forKey: installationDateKey)
+        KeychainService.shared.deleteValue(forKey: demoStartDateKey)
+        #endif
+    }
+    
 
 override func isDemoPeriodExpired() -> Bool {
 return false

@@ -66,7 +66,6 @@ struct SubscriptionView: View {
             if !isDemoExpired { // Check if demo is not expired
                 Button(action: {
                     // Implement cancel subscription logic here
-                    // For the sake of this example, we'll just print a message
                     print("Cancel to not subscribe yet")
                     isVisible = false
                 }) {
