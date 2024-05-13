@@ -34,7 +34,7 @@ The app contains several build settings for evaluation purposes:
 2. **DEMOSUBSCRIBE**
    - This mode allows you to test sandbox subscription WITHOUT an actual exercise bike.  
    - Simulates bike running so UI is fully functional. NO physical bike required.
-   - Like SANDBOX, the trial expiration date expires in 5 minutes (vs. the Release whic his 7 days)
+   - Like SANDBOX, the trial expiration date expires in 5 minutes (vs. the Release whic his 7 days).  Note the trial expiration will still show 7 days even though SANDBOX really only 5 minutes.
    - For testing purposes ONLY
 
 3. **DEBUG**: 
