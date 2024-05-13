@@ -41,8 +41,8 @@ class KeychainService {
     private func updateSubscriptionExpiration() {
        
         
-        #if DEBUG || SANDBOX
-        debugPrint("KeychainService:  DEBUG or SANDBOX")
+        #if DEBUG || SANDBOX || DEMOSUBSCRIBE
+        debugPrint("KeychainService:  DEBUG or SANDBOX or DEMOSUBSCRIBE" )
         // Debug is 15 minutes for subscription expiration in Keychain; used to check subscription expiration date without going to server
         let newExpirationDate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
         #else

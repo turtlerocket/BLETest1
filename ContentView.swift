@@ -31,7 +31,7 @@ var metricSize: Int = MetricSize.medium
 // Main ContentView
 struct ContentView: View {
     // For now swap ExcerciseBike for SimulatedExerciseBike
-    #if DEMO
+    #if DEMO || DEMOSUBSCRIBE
     @ObservedObject var bikeModel = SimulatedExerciseBike()
     #else
     @ObservedObject var bikeModel = EchelonBike()

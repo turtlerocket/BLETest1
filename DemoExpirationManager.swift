@@ -26,7 +26,7 @@ class DemoExpirationViewModel: ObservableObject {
         self.demoExpirationDate = expirationDate
         self.isDemoExpired = isExpired
     
-        #if DEBUG
+        #if DEBUG || DEMOSUBSCRIBE
         print("Message updated: \(message)")
          print("Demo expiration date updated: \(expirationDate)")
          print("Demo expired flag updated: \(isExpired)")
@@ -122,8 +122,8 @@ class DemoExpirationManager: ExpirationManager {
         let calendar = Calendar.current
 
         // If debug, demo expires in 5 minutes.  Production, 7 days
-        #if SANDBOX
-        debugPrint("SANDBOX - Checking if 5 minute trial period expired (Release trial expiration is 7 days); current date: \(currentDate)")
+        #if SANDBOX || DEMOSUBSCRIBE
+        debugPrint("SANDBOX or DEMOSUBSCRIBE - Checking if 5 minute trial period expired (Release trial expiration is 7 days); current date: \(currentDate)")
         let expirationDate = calendar.date(byAdding: .minute, value: 5, to: demoStartDate) // 5 minutes to expire for demo
         #else
         let expirationDate = calendar.date(byAdding: .day, value: 7, to: demoStartDate) // 7 Day expire for demo
@@ -186,7 +186,7 @@ class DemoExpirationManager: ExpirationManager {
             let currentDate = Date()
             saveDemoStartDate(currentDate)
             
-#if SANDBOX
+#if SANDBOX || DEMOSUBSCRIBE
 print("No trial start date found; Creating new ONE date: \(currentDate)")
 #endif
             
