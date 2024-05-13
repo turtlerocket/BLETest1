@@ -29,11 +29,12 @@ The app contains several build settings for evaluation purposes:
 1. **DEMO**: 
    - This mode allows you to simulate bike metrics without connecting to an actual exercise bike.  There is no trial period or subscription required.
    - It is useful for testing the dashboard UI and user experience.  
-   - Resets all Keychain trial and installation dates so following builds have clean trial and subscription slate.
+   - RESETS all Keychain trial and installation dates so following builds have clean trial and subscription slate.
 
 2. **DEMOSUBSCRIBE**
    - This mode allows you to test sandbox subscription WITHOUT an actual exercise bike.  
    - Simulates bike running so UI is fully functional. NO physical bike required.
+   - Like SANDBOX, the trial expiration date expires in 5 minutes (vs. the Release whic his 7 days)
    - For testing purposes ONLY
 
 3. **DEBUG**: 
