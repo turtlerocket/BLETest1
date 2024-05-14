@@ -108,12 +108,13 @@ struct SettingsView: View {
                 
             Spacer()
             }
-         
             
             Text("We'd love your feedback! For feature requests, bug reports, or compatibility with different Echelon bikes, reach out to us at contact@simplespinapp.com. Your input matters!")
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .padding(.bottom)
+            
+            
             
             // If active subscription, there should be a message that your subscription auto-renews on given date and provide
             // a Unsubscribe button.
@@ -149,6 +150,21 @@ struct SettingsView: View {
                     .foregroundColor(.red)
                     .padding()
             }
+            
+            // Adding the links for EULA and Privacy Policy
+                       VStack(alignment: .leading) { // Set VStack alignment to .leading
+                           Link("End-User License Agreement (EULA)", destination: URL(string: "https://simplespinapp.com/eula")!)
+                               .foregroundColor(.white) // Ensuring the link matches the text color
+                               .font(.caption) // Smaller font size
+                               .padding(.bottom, 5) // Adjust padding as needed
+
+                           Link("Privacy Policy", destination: URL(string: "https://simplespinapp.com/privacy-policy")!)
+                               .foregroundColor(.white) // Ensuring the link matches the text color
+                               .font(.caption) // Smaller font size
+                       }
+                       .padding(.bottom) // Additional padding for the whole link block
+            
+           
   
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

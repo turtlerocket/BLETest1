@@ -58,10 +58,32 @@ struct SubscriptionView: View {
                     .padding()
             }
             
-            Text("Terms: Subscription is charged monthly until canceled. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Your account will be charged for renewal within 24-hours prior to the end of the current period.  One can cancel at any time.")
-                .font(.footnote)
-                .multilineTextAlignment(.center)
-                .padding()
+            VStack(alignment: .leading, spacing: 2) {
+                            Text("Subscription Terms")
+                                .font(.title)
+                                .bold()
+
+                            Text("Monthly Subscription:")
+                                .font(.headline)
+                            
+                Text("• Subscription is charged $2.99 per month until canceled.")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("• Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("• Your account will be charged for renewal within 24-hours prior to the end of the current period.")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("• You can cancel at any time from your Apple account settings.")
+                                    .fixedSize(horizontal: false, vertical: true)
+
+
+                            Link("End-User License Agreement (EULA)", destination: URL(string: "https://simplespinapp.com/eula")!)
+                                .font(.headline)
+
+                            Link("Privacy Policy", destination: URL(string: "https://simplespinapp.com/privacy-policy")!)
+                                .font(.headline)
+                        }
+                        .padding()
+
             
             if !isDemoExpired { // Check if demo is not expired
                 Button(action: {
