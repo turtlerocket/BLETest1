@@ -57,6 +57,7 @@ class SimulatedExpirationManager: ExpirationManager {
         
         // If DEMO build, delete all the installation and demo start keys so that the next real build starts with clean-slate
         #if DEMO
+        print("SimulatedExpirationManager: Deleting Installation date key and Demo Start Date key")
         KeychainService.shared.deleteValue(forKey: installationDateKey)
         KeychainService.shared.deleteValue(forKey: demoStartDateKey)
         #endif

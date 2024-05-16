@@ -7,7 +7,13 @@ import Security
 class KeychainService {
     static let shared = KeychainService() // Shared instance
     
-    private init() {} // Private initializer to prevent creating multiple instances
+    private init() {
+        #if DEMO
+        print("KeychainService: Deleting SubscriptionExpiration key")
+        deleteValue(forKey: "SubscriptionExpiration")
+        #endif
+        
+    } // Private initializer to prevent creating multiple instances
     
     func setIsSubscribed(_ isSubscribed: Bool) {
         
