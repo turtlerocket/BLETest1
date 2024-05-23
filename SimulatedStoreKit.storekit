@@ -4,21 +4,7 @@
 
   ],
   "products" : [
-    {
-      "displayPrice" : "0.0",
-      "familyShareable" : false,
-      "internalID" : "6478621776",
-      "localizations" : [
-        {
-          "description" : "Simplify Your Ride, Elevate Your Stride ",
-          "displayName" : "Simple Spin",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "simplespinpurchase1",
-      "referenceName" : "Simple Spin Purchase",
-      "type" : "NonConsumable"
-    }
+
   ],
   "settings" : {
     "_applicationInternalID" : "6478510467",
